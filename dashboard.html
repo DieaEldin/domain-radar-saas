@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlacklistMail Radar — Enterprise Domain Intelligence</title>
+    <!-- Tailwind CSS & Lucide Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .radar-glow {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen pb-12">
+
+    <!-- Navbar / Branding Header -->
+    <nav
+        class="border-b border-gray-800 bg-gray-900/50 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="bg-sky-500/10 p-2.5 rounded-xl border border-sky-500/20 text-sky-400">
+                <i data-lucide="radar" class="w-6 h-6 animate-pulse"></i>
+            </div>
+            <div>
+                <span class="text-xl font-bold tracking-tight text-white">BlacklistMail <span
+                        class="gradient-text">Radar</span></span>
+                <span class="block text-xs text-gray-400">Domain Investment & Security Intelligence</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span
+                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-ping"></span> Live Engine v1.0
+            </span>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-6 mt-4">
+
+        <!-- Hero Search Section -->
+        <div class="text-center max-w-3xl mx-auto my-12">
+            <!-- Badge -->
+            <div
+                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-6 backdrop-blur-md">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Next-Gen Domain Analytics</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-5 leading-tight text-white">
+                Deep Domain Intelligence. <br />
+                <span class="gradient-text">Zero Guesswork.</span>
+            </h1>
+
+            <!-- Sub Heading -->
+            <p class="text-gray-400 text-base md:text-lg mb-9 max-w-2xl mx-auto leading-relaxed">
+                Check blacklist status, financial valuation, active ecosystems, and email deliverability — <span
+                    class="text-gray-200 font-medium">all in one report.</span>
+            </p>
+
+            <!-- Search Box -->
+            <form onsubmit="event.preventDefault(); runAudit();"
+                class="glass-card p-2 rounded-2xl radar-glow flex items-center gap-2 max-w-2xl mx-auto">
+                <div class="pl-4 text-gray-400">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input type="text" id="domainInput" placeholder="Enter target domain (e.g. workplaceemail.com)..."
+                    class="w-full bg-transparent border-none text-white focus:outline-none focus:ring-0 placeholder-gray-500 text-base py-2"
+                    required>
+                <button type="submit" id="btnAnalyze"
+                    class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg flex items-center gap-2 shrink-0">
+                    <span id="btnText">Analyze</span>
+                    <i id="btnIcon" data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Loading Indicator (Hidden by default) -->
+        <div id="loadingState" class="hidden text-center py-12">
+            <div class="inline-block p-4 rounded-full bg-sky-500/10 text-sky-400 mb-4 animate-spin">
+                <i data-lucide="loader-2" class="w-8 h-8"></i>
+            </div>
+            <p class="text-gray-300 font-medium">Analyzing WHOIS, DNSBL, MX & Valuation Metrics...</p>
+        </div>
+
+        <!-- Dashboard Content (Hidden by default until search) -->
+        <div id="resultsContainer" class="hidden space-y-6">
+
+            <!-- Top Summary Banner -->
+            <div
+                class="glass-card rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-sky-500">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center text-sky-400 border border-gray-700">
+                        <i data-lucide="globe" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h2 id="dispDomain" class="text-2xl font-bold text-white">---</h2>
+                        <p class="text-sm text-gray-400 flex items-center gap-2 mt-0.5">
+                            <i data-lucide="server" class="w-4 h-4 text-gray-500"></i> IP: <span id="dispIP"
+                                class="text-gray-300 font-mono">---</span>
+                        </p>
+                    </div>
+                </div>
+                <a id="pdfDownloadBtn" href="#" target="_blank"
+                    class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all">
+                    <i data-lucide="file-down" class="w-5 h-5"></i>
+                    <span>Download PDF Report</span>
+                </a>
+            </div>
+
+            <!-- Key Metrics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <!-- Est. Valuation -->
+                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Est. Valuation</span>
+                        <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="dollar-sign"
+                                class="w-5 h-5"></i></div>
+                    </div>
+                    <div id="dispValuation" class="text-2xl font-bold text-emerald-400">---</div>
+                    <div class="text-xs text-gray-500 mt-2">Market Liquidity Estimate</div>
+                </div>
+
+                <!-- Projected ROI -->
+                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Projected ROI</span>
+                        <div class="p-2 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="trending-up"
+                                class="w-5 h-5"></i></div>
+                    </div>
+                    <div id="dispROI" class="text-2xl font-bold text-sky-400">---</div>
+                    <div class="text-xs text-gray-500 mt-2">Based on acquisition benchmark</div>
+                </div>
+
+                <!-- Live End-User Sites -->
+                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Live Websites</span>
+                        <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i data-lucide="laptop"
+                                class="w-5 h-5"></i></div>
+                    </div>
+                    <div id="dispLiveCount" class="text-2xl font-bold text-white">---</div>
+                    <div class="text-xs text-gray-500 mt-2">Active running end-user sites</div>
+                </div>
+
+                <!-- Domain Age -->
+                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Domain Age</span>
+                        <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400"><i data-lucide="calendar"
+                                class="w-5 h-5"></i></div>
+                    </div>
+                    <div id="dispAge" class="text-2xl font-bold text-white">---</div>
+                    <div class="text-xs text-gray-500 mt-2">Registration longevity</div>
+                </div>
+            </div>
+
+            <!-- Extended Data Sections -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Target Buyer Profile -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-5 border-b border-gray-800 pb-3">
+                        <i data-lucide="target" class="w-5 h-5 text-sky-400"></i>
+                        <h3 class="font-bold text-lg text-white">Target Buyer Sectors</h3>
+                    </div>
+                    <ul id="targetStartupsList" class="space-y-3">
+                        <!-- Dynamic content -->
+                    </ul>
+                </div>
+
+                <!-- Connected Ecosystem & Active Sites -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-5 border-b border-gray-800 pb-3">
+                        <i data-lucide="link" class="w-5 h-5 text-indigo-400"></i>
+                        <h3 class="font-bold text-lg text-white">Active Live Websites</h3>
+                    </div>
+                    <ul id="liveSitesList" class="space-y-3">
+                        <!-- Dynamic content -->
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        lucide.createIcons();
+
+        function runAudit() {
+            const domainInput = document.getElementById('domainInput').value.trim();
+            if (!domainInput) return;
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            const loadingState = document.getElementById('loadingState');
+            const btnText = document.getElementById('btnText');
+
+            // 1. إخفاء النتائج القديمة وإظهار مؤشر التحميل
+            resultsContainer.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            btnText.innerText = 'Analyzing...';
+
+            // 2. طلب البيانات من الـ API
+            fetch(`/api/v1/audit/${domainInput}`)
+                .then(res => res.json())
+                .then(resData => {
+                    const data = resData.data;
+                    const intel = data.deep_intel;
+
+                    // تحديث القيم بالبيانات الحقيقية للدومين المكتوب
+                    document.getElementById('dispDomain').innerText = data.domain;
+                    document.getElementById('dispIP').innerText = data.ip;
+                    document.getElementById('dispValuation').innerText = intel.financials.valuation_range;
+                    document.getElementById('dispROI').innerText = intel.financials.projected_roi;
+                    document.getElementById('dispLiveCount').innerText = intel.live_websites_count + " Active Sites";
+                    document.getElementById('dispAge').innerText = intel.whois.age_years + " Yrs";
+                    document.getElementById('pdfDownloadBtn').href = `/api/v1/download-pdf/${data.domain}`;
+
+                    // تحديث قائمة الشركات المستهدفة
+                    const startupList = document.getElementById('targetStartupsList');
+                    startupList.innerHTML = intel.target_startups.map(s => `
+                        <li class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/40 border border-gray-700/50">
+                            <div class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="building-2" class="w-4 h-4"></i></div>
+                            <span class="text-sm font-medium text-gray-200">${s}</span>
+                        </li>
+                    `).join('');
+
+                    // تحديث قائمة المواقع الشغالة
+                    const sitesList = document.getElementById('liveSitesList');
+                    sitesList.innerHTML = intel.live_websites_list.map(site => `
+                        <li class="flex items-center justify-between p-3 rounded-xl bg-gray-800/40 border border-gray-700/50">
+                            <div class="flex items-center gap-3">
+                                <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
+                                <span class="text-sm font-mono text-gray-300">${site}</span>
+                            </div>
+                            <a href="${site}" target="_blank" class="text-xs text-sky-400 hover:underline flex items-center gap-1">
+                                Visit <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
+                        </li>
+                    `).join('');
+
+                    // إعادة تحميل الأيقونات وإبراز النتائج الجديدة
+                    lucide.createIcons();
+                    loadingState.classList.add('hidden');
+                    resultsContainer.classList.remove('hidden');
+                    btnText.innerText = 'Analyze';
+                })
+                .catch(err => {
+                    console.error("Error fetching audit data:", err);
+                    alert("Failed to analyze domain. Please check backend response.");
+                    loadingState.classList.add('hidden');
+                    btnText.innerText = 'Analyze';
+                });
+        }
+    </script>
+</body>
+
+</html>
