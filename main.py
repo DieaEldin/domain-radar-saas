@@ -1,21 +1,24 @@
 import os
-from blacklist_checker import generate_audit_report, generate_pdf_report
-from fastapi import BackgroundTasks, FastAPI, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.responses import HTMLResponse, FileResponse
 
-# 1. إنشاء تطبيق FastAPI
+# 1. استيراد دالة الفحص ودالة الـ PDF المطورة الجديدة
+from blacklist_checker import generate_audit_report
+from pdf_generator import generate_radar_pdf
+
+# 2. إنشاء تطبيق FastAPI
 app = FastAPI(
     title="BlacklistMail Radar API",
     description="Enterprise Domain Intelligence & Blacklist Audit API",
     version="1.0.0",
 )
 
-# 2. إنشاء مجلد مؤقت لحفظ تقارير PDF
+# 3. إنشاء مجلد مؤقت لحفظ تقارير PDF
 PDF_DIR = "./generated_reports"
 os.makedirs(PDF_DIR, exist_ok=True)
 
 
-# 3. مسار عرض واجهة الـ Dashboard الرسمية
+# 4. مسار عرض واجهة الـ Dashboard الرسمية
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def get_dashboard():
@@ -31,7 +34,7 @@ def get_dashboard():
         return f.read()
 
 
-# 4. API endpoint لإرجاع نتائج الفحص كـ JSON
+# 5. API endpoint لإرجاع نتائج الفحص كـ JSON
 @app.get("/api/v1/audit/{domain}")
 def audit_domain(domain: str):
     """إرجاع بيانات الفحص الشاملة للدومين بتنسيق JSON"""
@@ -49,7 +52,7 @@ def audit_domain(domain: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 5. API endpoint لتوليد وتحميل ملف الـ PDF
+# 6. API endpoint لتوليد وتحميل ملف الـ PDF بالتصميم المطور
 @app.get("/api/v1/download-pdf/{domain}")
 def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     """توليد تقرير PDF احترافي وتحميله مباشرة مع مسحه تلقائياً بعد الإرسال"""
@@ -64,9 +67,9 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     pdf_path = os.path.join(PDF_DIR, pdf_filename)
 
     try:
-        # جلب البيانات وتوليد ملف PDF
+        # جلب البيانات وتوليد ملف PDF باستعمال الدالة الجديدة
         report_data = generate_audit_report(clean_domain)
-        generate_pdf_report(report_data, pdf_path)
+        generate_radar_pdf(report_data, pdf_path)
 
         # إضافة مهمة خلفية لمسح الملف بعد تنزيله لعدم استهلاك مساحة الخادم
         background_tasks.add_task(os.remove, pdf_path)
@@ -82,7 +85,7 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
         )
 
 
-# 6. التشغيل المباشر عند استدعاء الملف
+# 7. التشغيل المباشر عند استدعاء الملف
 if __name__ == "__main__":
     import uvicorn
 
