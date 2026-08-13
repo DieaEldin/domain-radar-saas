@@ -4,17 +4,72 @@ import weasyprint
 def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
     """
     Generates an executive, highly polished PDF audit report for BlacklistMail Radar.
+    Dynamically maps data from generate_audit_report().
     """
-    domain_name = domain_data.get("domain", "example.com")
-    val_low = domain_data.get("val_low", "$864")
-    val_high = domain_data.get("val_high", "$1,475")
-    bin_price = domain_data.get("bin_price", "$1,170 USD")
-    roi_range = domain_data.get("roi_range", "7,100% - 12,191%")
-    str_rate = domain_data.get("str_rate", "3.7% / Year")
-    ip_status = domain_data.get("ip_status", "Clean (0 Listed)")
-    ip_address = domain_data.get("ip_address", "216.24.57.1")
-    registrar = domain_data.get("registrar", "Dynadot LLC")
-    score = domain_data.get("score", "9.8")
+    # 1. Safe Extraction of Top-Level Data
+    domain_name = domain_data.get("domain", "Unknown Domain")
+    ip_address = domain_data.get("ip", "Unresolved IP")
+    score = domain_data.get("score", 70)
+
+    # 2. Extract Deep Intel & Financials
+    deep_intel = domain_data.get("deep_intel", {})
+    financials = deep_intel.get("financials", {})
+    val_range = financials.get("valuation_range", "$300 - $1,000")
+    bin_price = financials.get("buy_now_price", "$850")
+    roi_range = financials.get("projected_roi", "100% - 300%")
+    str_rate = financials.get("sell_through_rate", "2.5% / Year")
+
+    # 3. Extract WHOIS Data
+    whois_info = deep_intel.get("whois", {})
+    registrar = whois_info.get("registrar", "Protected Registrar")
+    domain_age = whois_info.get("age_years", 1)
+
+    # 4. Extract Blacklist & Reputation
+    blacklist_info = domain_data.get("blacklist", {})
+    listed_count = blacklist_info.get("listed_count", 0)
+    if listed_count == 0:
+        ip_status = "Clean (0 Listed)"
+        ip_status_class = "success"
+    else:
+        ip_status = f"Listed ({listed_count} RBLs)"
+        ip_status_class = "danger"
+
+    # 5. Extract Email & Security Infrastructure (Item 1 Integration)
+    sec_records = domain_data.get("security_records", {})
+    spf_info = sec_records.get("spf", {})
+    dmarc_info = sec_records.get("dmarc", {})
+    mx_info = sec_records.get("mx", {})
+
+    spf_status_badge = '<span class="pill pill-success">Configured</span>' if spf_info.get("status") else '<span class="pill pill-warning">Missing</span>'
+    spf_val = spf_info.get("value", "v=spf1 ... (Not Configured)")
+
+    dmarc_status_badge = '<span class="pill pill-success">Configured</span>' if dmarc_info.get("status") else '<span class="pill pill-warning">Missing</span>'
+    dmarc_val = dmarc_info.get("value", "No DMARC Record Found")
+
+    mx_status_badge = '<span class="pill pill-success">Active</span>' if mx_info.get("status") else '<span class="pill pill-warning">Missing</span>'
+    mx_provider = mx_info.get("provider", "No Mail Server Detected")
+
+    # 6. Build TLD Ecosystem Rows Dynamically
+    registered_tlds = deep_intel.get("registered_tlds", [".com"])
+    popular_tlds = [".com", ".net", ".org", ".io", ".ai"]
+    tld_rows_html = ""
+    
+    base_keyword = deep_intel.get("base_keyword", domain_name.split(".")[0])
+
+    for tld in popular_tlds:
+        is_reg = tld in registered_tlds or domain_name.endswith(tld)
+        status_pill = '<span class="pill pill-danger">Registered</span>' if is_reg else '<span class="pill pill-success">Available</span>'
+        dns_res = "Active Resolution" if is_reg else "Unassigned"
+        demand = "Primary Asset" if tld == ".com" else ("High Tech Demand" if tld in [".io", ".ai"] else "Medium Potential")
+        
+        tld_rows_html += f"""
+        <tr>
+            <td><strong>{tld}</strong></td>
+            <td>{status_pill}</td>
+            <td>{dns_res}</td>
+            <td>{demand}</td>
+        </tr>
+        """
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -47,7 +102,6 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             background-color: #ffffff;
         }}
 
-        /* Top Header Component */
         .header {{
             background: linear-gradient(135deg, #0b132b 0%, #1c2541 60%, #3a506b 100%);
             color: #ffffff;
@@ -66,9 +120,7 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             text-transform: uppercase;
         }}
 
-        .brand-logo span {{
-            color: #38bdf8;
-        }}
+        .brand-logo span {{ color: #38bdf8; }}
 
         .report-tag {{
             font-size: 8.5pt;
@@ -94,7 +146,6 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             color: #38bdf8;
         }}
 
-        /* Key Performance Grid */
         .grid-4 {{
             width: 100%;
             border-collapse: separate;
@@ -122,16 +173,15 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
         }}
 
         .card-value {{
-            font-size: 14pt;
+            font-size: 13pt;
             font-weight: 800;
             color: #0f172a;
         }}
 
         .card-value.primary {{ color: #0284c7; }}
         .card-value.success {{ color: #16a34a; }}
-        .card-value.warning {{ color: #d97706; }}
+        .card-value.danger {{ color: #dc2626; }}
 
-        /* Section Title Styling */
         .section-header {{
             font-size: 10pt;
             font-weight: 800;
@@ -154,7 +204,6 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             border-radius: 2px;
         }}
 
-        /* Tables */
         table.styled-table {{
             width: 100%;
             border-collapse: collapse;
@@ -182,12 +231,12 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             font-size: 8.5pt;
             color: #334155;
             border-bottom: 1px solid #f1f5f9;
+            word-wrap: break-word;
         }}
 
         table.styled-table tr:last-child td {{ border-bottom: none; }}
         table.styled-table tr:nth-child(even) {{ background-color: #f8fafc; }}
 
-        /* Status Pills */
         .pill {{
             padding: 3px 8px;
             border-radius: 6px;
@@ -202,12 +251,10 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
         .pill-warning {{ background-color: #fef3c7; color: #b45309; }}
         .pill-info {{ background-color: #e0f2fe; color: #0369a1; }}
 
-        /* Footer */
         .footer {{
             margin-top: 25px;
             padding-top: 12px;
             border-top: 1px solid #e2e8f0;
-            text-align: space-between;
             font-size: 7.5pt;
             color: #94a3b8;
         }}
@@ -242,11 +289,11 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             </td>
             <td class="card" style="width: 25%;">
                 <div class="card-label">IP Status</div>
-                <div class="card-value success">{ip_status}</div>
+                <div class="card-value {ip_status_class}">{ip_status}</div>
             </td>
             <td class="card" style="width: 25%;">
                 <div class="card-label">Est. Valuation</div>
-                <div class="card-value">{val_high}</div>
+                <div class="card-value">{val_range}</div>
             </td>
             <td class="card" style="width: 25%;">
                 <div class="card-label">Projected ROI</div>
@@ -267,19 +314,19 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
         <tbody>
             <tr>
                 <td><strong>Suggested Buy-It-Now (BIN)</strong></td>
-                <td><strong style="color: #0284c7;">{bin_price}</strong></td>
+                <td><strong style="color: #0284c7;">{bin_price} USD</strong></td>
             </tr>
             <tr>
                 <td><strong>Estimated Valuation Range</strong></td>
-                <td>{val_low} - {val_high} USD</td>
+                <td>{val_range} USD</td>
             </tr>
             <tr>
                 <td><strong>Sell-Through Rate (STR)</strong></td>
                 <td>{str_rate}</td>
             </tr>
             <tr>
-                <td><strong>Brandability Score</strong></td>
-                <td><span class="pill pill-info">High (9.5 / 10)</span> - Category Exact Match</td>
+                <td><strong>Domain Age / Brandability</strong></td>
+                <td><span class="pill pill-info">{domain_age} Years Old</span> - Active Market Asset</td>
             </tr>
         </tbody>
     </table>
@@ -296,36 +343,7 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><strong>.com</strong></td>
-                <td><span class="pill pill-danger">Registered</span></td>
-                <td>Active (Render Cloud)</td>
-                <td>Primary Asset</td>
-            </tr>
-            <tr>
-                <td><strong>.net</strong></td>
-                <td><span class="pill pill-success">Available</span></td>
-                <td>Unassigned</td>
-                <td>Medium Potential</td>
-            </tr>
-            <tr>
-                <td><strong>.org</strong></td>
-                <td><span class="pill pill-success">Available</span></td>
-                <td>Unassigned</td>
-                <td>Medium Potential</td>
-            </tr>
-            <tr>
-                <td><strong>.io</strong></td>
-                <td><span class="pill pill-success">Available</span></td>
-                <td>Unassigned</td>
-                <td>High SaaS Demand</td>
-            </tr>
-            <tr>
-                <td><strong>.ai</strong></td>
-                <td><span class="pill pill-success">Available</span></td>
-                <td>Unassigned</td>
-                <td>High Tech Demand</td>
-            </tr>
+            {tld_rows_html}
         </tbody>
     </table>
 
@@ -345,25 +363,25 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
                 <td><strong>A Record</strong></td>
                 <td>@ ({domain_name})</td>
                 <td><code>{ip_address}</code></td>
-                <td><span class="pill pill-success">Active</span></td>
+                <td><span class="pill pill-success">Resolved</span></td>
             </tr>
             <tr>
-                <td><strong>CNAME</strong></td>
-                <td>www.{domain_name}</td>
-                <td><code>domain-radar-saas.onrender.com</code></td>
-                <td><span class="pill pill-success">Active</span></td>
-            </tr>
-            <tr>
-                <td><strong>MX Record</strong></td>
+                <td><strong>Mail Provider (MX)</strong></td>
                 <td>@</td>
-                <td><em>No Mail Server Detected</em></td>
-                <td><span class="pill pill-warning">Missing</span></td>
+                <td>{mx_provider}</td>
+                <td>{mx_status_badge}</td>
             </tr>
             <tr>
                 <td><strong>SPF Record</strong></td>
                 <td>TXT (@)</td>
-                <td><em>v=spf1 ... (Not Configured)</em></td>
-                <td><span class="pill pill-warning">Missing</span></td>
+                <td style="font-family: monospace; font-size: 7.5pt;">{spf_val[:45]}...</td>
+                <td>{spf_status_badge}</td>
+            </tr>
+            <tr>
+                <td><strong>DMARC Record</strong></td>
+                <td>TXT (_dmarc)</td>
+                <td style="font-family: monospace; font-size: 7.5pt;">{dmarc_val[:45]}...</td>
+                <td>{dmarc_status_badge}</td>
             </tr>
             <tr>
                 <td><strong>Registrar</strong></td>
