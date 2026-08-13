@@ -2,15 +2,15 @@ import os
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import HTMLResponse, FileResponse
 
-# 1. استيراد دالة الفحص ودالة الـ PDF المطورة الجديدة
-from blacklist_checker import generate_audit_report
+# 1. استيراد دالة الفحص ودالة الإحصائيات ودالة الـ PDF
+from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
 
 # 2. إنشاء تطبيق FastAPI
 app = FastAPI(
     title="BlacklistMail Radar API",
-    description="Enterprise Domain Intelligence & Blacklist Audit API",
-    version="1.0.0",
+    description="Enterprise Domain Intelligence, Email Security & Blacklist Audit API",
+    version="1.1.0",
 )
 
 # 3. إنشاء مجلد مؤقت لحفظ تقارير PDF
@@ -34,10 +34,21 @@ def get_dashboard():
         return f.read()
 
 
-# 5. API endpoint لإرجاع نتائج الفحص كـ JSON
+# 5. API endpoint جديد لإرجاع الإحصائيات العامة الحيّة (Live Dashboard Stats)
+@app.get("/api/v1/stats")
+def get_global_stats():
+    """إرجاع الإحصائيات العامة الحيّة للـ Dashboard (البند 4)"""
+    try:
+        stats = get_live_dashboard_stats()
+        return {"success": True, "stats": stats}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# 6. API endpoint لإرجاع نتائج الفحص الشامل كـ JSON
 @app.get("/api/v1/audit/{domain}")
 def audit_domain(domain: str):
-    """إرجاع بيانات الفحص الشاملة للدومين بتنسيق JSON"""
+    """إرجاع بيانات الفحص الشاملة للدومين بتنسيق JSON متضمنة (SPF/DMARC/RBL Guides)"""
     try:
         clean_domain = (
             domain.strip()
@@ -52,7 +63,7 @@ def audit_domain(domain: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 6. API endpoint لتوليد وتحميل ملف الـ PDF بالتصميم المطور
+# 7. API endpoint لتوليد وتحميل ملف الـ PDF بالتصميم المطور
 @app.get("/api/v1/download-pdf/{domain}")
 def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     """توليد تقرير PDF احترافي وتحميله مباشرة مع مسحه تلقائياً بعد الإرسال"""
@@ -67,7 +78,7 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     pdf_path = os.path.join(PDF_DIR, pdf_filename)
 
     try:
-        # جلب البيانات وتوليد ملف PDF باستعمال الدالة الجديدة
+        # جلب البيانات وتوليد ملف PDF باستعمال الدالة الخاصة بالـ PDF
         report_data = generate_audit_report(clean_domain)
         generate_radar_pdf(report_data, pdf_path)
 
@@ -85,7 +96,7 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
         )
 
 
-# 7. التشغيل المباشر عند استدعاء الملف
+# 8. التشغيل المباشر عند استدعاء الملف
 if __name__ == "__main__":
     import uvicorn
 
