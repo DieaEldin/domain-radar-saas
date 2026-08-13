@@ -238,7 +238,7 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
         <tr>
             <td class="card" style="width: 25%;">
                 <div class="card-label">Reputation Score</div>
-                <div class="card-value primary">{score} / 10</div>
+                <div class="card-value primary">{score} / 100</div>
             </td>
             <td class="card" style="width: 25%;">
                 <div class="card-label">IP Status</div>
