@@ -5,28 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlacklistMail Radar — Enterprise Domain Audit & IP Reputation Engine</title>
-    
+
     <!-- Meta Description (Optimized for Ahrefs SEO) -->
-    <meta name="description" content="Real-time domain blacklist detection, IP reputation checks, and automated MX/SPF security intelligence reports for enterprise email deliverability.">
-    
+    <meta name="description"
+        content="Real-time domain blacklist detection, IP reputation checks, and automated MX/SPF security intelligence reports for enterprise email deliverability.">
+
     <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://blacklistmail.com/">
     <meta property="og:title" content="BlacklistMail Radar — Enterprise Domain Audit">
-    <meta property="og:description" content="Real-time domain blacklist detection and IP reputation intelligence reports.">
+    <meta property="og:description"
+        content="Real-time domain blacklist detection and IP reputation intelligence reports.">
     <meta property="og:image" content="https://blacklistmail.com/static/og-image.png">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://blacklistmail.com/">
     <meta name="twitter:title" content="BlacklistMail Radar — Enterprise Domain Audit">
-    <meta name="twitter:description" content="Real-time domain blacklist detection and IP reputation intelligence reports.">
+    <meta name="twitter:description"
+        content="Real-time domain blacklist detection and IP reputation intelligence reports.">
     <meta name="twitter:image" content="https://blacklistmail.com/static/og-image.png">
 
     <!-- Sitemap Reference -->
     <link rel="sitemap" type="application/xml" title="Sitemap" href="https://blacklistmail.com/sitemap.xml" />
 
-    <!-- Tailwind CSS & Lucide Icons (التنسيقات الأساسية) -->
+    <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -53,11 +56,15 @@
         .radar-glow {
             box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
         }
+
+        /* Dropdown Navigation Menu Hover */
+        .dropdown:hover .dropdown-menu {
+            display: block !important;
+        }
     </style>
 
     <!-- Ahrefs Analytics -->
     <script src="https://analytics.ahrefs.com/analytics.js" data-key="zz/US2QBBSpOXT+yl/GUUg" async></script>
-    <meta name="robots" content="noindex, nofollow">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -75,285 +82,324 @@
     }
     </script>
 </head>
+
 <body>
     <div class="min-h-screen pb-12">
-    <!-- Domain Acquisition Banner Bar -->
-    <!--
-    <div
-        class="bg-slate-900 border-b border-slate-800 py-2.5 px-4 text-center text-xs sm:text-sm text-slate-400 font-sans flex items-center justify-center gap-2 flex-wrap">
-        <span>💎 Premium Domain & Live SaaS Codebase Available for Acquisition.</span>
-        <a href="https://www.afternic.com/domain/blacklistmail.com" target="_blank"
-            class="inline-flex items-center gap-1.5 color-sky-400 font-semibold text-sky-400 bg-sky-500/10 hover:bg-sky-500/20 px-3 py-1 rounded-md border border-sky-500/30 transition-all text-xs">
-            Make an Offer / Buy on Afternic ➔
-        </a>
-    </div>
-    -->
 
-    <!-- Navbar / Branding Header -->
-    <nav
-        class="border-b border-gray-800 bg-gray-900/50 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="bg-sky-500/10 p-2.5 rounded-xl border border-sky-500/20 text-sky-400">
-                <i data-lucide="radar" class="w-6 h-6 animate-pulse"></i>
-            </div>
-            <div>
-                <span class="text-xl font-bold tracking-tight text-white">BlacklistMail <span
-                        class="gradient-text">Radar</span></span>
-                <span class="block text-xs text-gray-400">Domain Investment & Security Intelligence</span>
-            </div>
-        </div>
-        <div class="flex items-center space-x-4">
-            <span
-                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-ping"></span> Live Engine v1.0
-            </span>
-        </div>
-    </nav>
-
-    <div class="max-w-7xl mx-auto px-6 mt-4">
-
-        <!-- Hero Search Section -->
-        <div class="text-center max-w-3xl mx-auto my-12">
-            <!-- Badge -->
-            <div
-                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-6 backdrop-blur-md">
-                <i data-lucide="zap" class="w-3.5 h-3.5 text-sky-400"></i>
-                <span>Next-Gen Domain Analytics</span>
-            </div>
-
-            <!-- Main Heading -->
-            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-5 leading-tight text-white">
-                Deep Domain Intelligence. <br />
-                <span class="gradient-text">Zero Guesswork.</span>
-            </h1>
-
-            <!-- Sub Heading -->
-            <p class="text-gray-400 text-base md:text-lg mb-9 max-w-2xl mx-auto leading-relaxed">
-                Check blacklist status, financial valuation, active ecosystems, and email deliverability — <span
-                    class="text-gray-200 font-medium">all in one report.</span>
-            </p>
-
-            <!-- Search Box -->
-            <form onsubmit="event.preventDefault(); runAudit();"
-                class="glass-card p-2 rounded-2xl radar-glow flex items-center gap-2 max-w-2xl mx-auto">
-                <div class="pl-4 text-gray-400">
-                    <i data-lucide="search" class="w-5 h-5"></i>
+        <!-- Enterprise Navigation Header -->
+        <nav
+            class="border-b border-gray-800 bg-gray-900/60 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-sky-500/10 p-2.5 rounded-xl border border-sky-500/20 text-sky-400">
+                    <i data-lucide="radar" class="w-6 h-6 animate-pulse"></i>
                 </div>
-                <input type="text" id="domainInput" placeholder="Enter target domain (e.g. workplaceemail.com)..."
-                    class="w-full bg-transparent border-none text-white focus:outline-none focus:ring-0 placeholder-gray-500 text-base py-2"
-                    required>
-                <button type="submit" id="btnAnalyze"
-                    class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg flex items-center gap-2 shrink-0">
-                    <span id="btnText">Analyze</span>
-                    <i id="btnIcon" data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-            </form>
-        </div>
-
-        <!-- Loading Indicator (Hidden by default) -->
-        <div id="loadingState" class="hidden text-center py-12">
-            <div class="inline-block p-4 rounded-full bg-sky-500/10 text-sky-400 mb-4 animate-spin">
-                <i data-lucide="loader-2" class="w-8 h-8"></i>
+                <div>
+                    <a href="/" class="text-xl font-bold tracking-tight text-white block">
+                        BlacklistMail <span class="gradient-text">Radar</span>
+                    </a>
+                    <span class="block text-xs text-gray-400">Domain Investment & Security Intelligence</span>
+                </div>
             </div>
-            <p class="text-gray-300 font-medium">Analyzing WHOIS, DNSBL, MX & Valuation Metrics...</p>
-        </div>
 
-        <!-- Dashboard Content (Hidden by default until search) -->
-        <div id="resultsContainer" class="hidden space-y-6">
-
-            <!-- Top Summary Banner -->
-            <div
-                class="glass-card rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-sky-500">
-                <div class="flex items-center gap-4">
+            <!-- Navigation Links -->
+            <div class="flex items-center space-x-6 text-sm font-medium">
+                <!-- Dropdown Tools -->
+                <div class="relative dropdown py-2">
+                    <button
+                        class="flex items-center gap-1.5 text-gray-300 hover:text-sky-400 transition-colors focus:outline-none">
+                        <span>Tools</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                    </button>
                     <div
-                        class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center text-sky-400 border border-gray-700">
-                        <i data-lucide="globe" class="w-7 h-7"></i>
-                    </div>
-                    <div>
-                        <h2 id="dispDomain" class="text-2xl font-bold text-white">---</h2>
-                        <p class="text-sm text-gray-400 flex items-center gap-2 mt-0.5">
-                            <i data-lucide="server" class="w-4 h-4 text-gray-500"></i> IP: <span id="dispIP"
-                                class="text-gray-300 font-mono">---</span>
-                        </p>
+                        class="dropdown-menu hidden absolute left-0 mt-1 w-52 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-2 z-50">
+                        <a href="/spf-checker"
+                            class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-sky-400"></i> SPF Checker
+                        </a>
+                        <a href="/dmarc-checker"
+                            class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
+                            <i data-lucide="lock" class="w-4 h-4 text-sky-400"></i> DMARC Checker
+                        </a>
+                        <a href="/dkim-checker"
+                            class="flex items-center gap-2 px-3 py-2 text-xs text-sky-400 font-semibold hover:bg-gray-800 rounded-lg transition-colors">
+                            <i data-lucide="key" class="w-4 h-4 text-sky-400"></i> DKIM Checker
+                        </a>
+                        <a href="/spam-analyzer"
+                            class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
+                            <i data-lucide="mail-warning" class="w-4 h-4 text-sky-400"></i> Spam Analyzer
+                        </a>
+                        <a href="/ssl-checker"
+                            class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-sky-400"></i> SSL Checker
+                        </a>
                     </div>
                 </div>
-                <a id="pdfDownloadBtn" href="#" target="_blank"
-                    class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all">
-                    <i data-lucide="file-down" class="w-5 h-5"></i>
-                    <span>Download PDF Report</span>
-                </a>
+
+                <a href="/news"
+                    class="text-gray-300 hover:text-sky-400 transition-colors hidden sm:inline-block">Security News</a>
+                <a href="/uptime-monitor"
+                    class="text-gray-300 hover:text-sky-400 transition-colors hidden md:inline-block">Uptime Monitor</a>
+                <a href="/uptime-monitor"
+                    class="text-sky-400 hover:text-sky-300 font-semibold hidden md:inline-block">API & Pricing</a>
+
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-ping"></span> Live Engine v3.0
+                </span>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto px-6 mt-4">
+
+            <!-- Hero Search Section -->
+            <div class="text-center max-w-3xl mx-auto my-12">
+                <!-- Badge -->
+                <div
+                    class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-6 backdrop-blur-md">
+                    <i data-lucide="zap" class="w-3.5 h-3.5 text-sky-400"></i>
+                    <span>Next-Gen Domain Analytics</span>
+                </div>
+
+                <!-- Main Heading -->
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-5 leading-tight text-white">
+                    Deep Domain Intelligence. <br />
+                    <span class="gradient-text">Zero Guesswork.</span>
+                </h1>
+
+                <!-- Sub Heading -->
+                <p class="text-gray-400 text-base md:text-lg mb-9 max-w-2xl mx-auto leading-relaxed">
+                    Check blacklist status, financial valuation, active ecosystems, and email deliverability — <span
+                        class="text-gray-200 font-medium">all in one report.</span>
+                </p>
+
+                <!-- Search Box -->
+                <form onsubmit="event.preventDefault(); runAudit();"
+                    class="glass-card p-2 rounded-2xl radar-glow flex items-center gap-2 max-w-2xl mx-auto">
+                    <div class="pl-4 text-gray-400">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </div>
+                    <input type="text" id="domainInput" placeholder="Enter target domain (e.g. workplaceemail.com)..."
+                        class="w-full bg-transparent border-none text-white focus:outline-none focus:ring-0 placeholder-gray-500 text-base py-2"
+                        required>
+                    <button type="submit" id="btnAnalyze"
+                        class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg flex items-center gap-2 shrink-0">
+                        <span id="btnText">Analyze</span>
+                        <i id="btnIcon" data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
             </div>
 
-            <!-- Key Metrics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                <!-- Est. Valuation -->
-                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Est. Valuation</span>
-                        <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="dollar-sign"
-                                class="w-5 h-5"></i></div>
-                    </div>
-                    <div id="dispValuation" class="text-2xl font-bold text-emerald-400">---</div>
-                    <div class="text-xs text-gray-500 mt-2">Market Liquidity Estimate</div>
+            <!-- Loading Indicator (Hidden by default) -->
+            <div id="loadingState" class="hidden text-center py-12">
+                <div class="inline-block p-4 rounded-full bg-sky-500/10 text-sky-400 mb-4 animate-spin">
+                    <i data-lucide="loader-2" class="w-8 h-8"></i>
                 </div>
-
-                <!-- Projected ROI -->
-                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Projected ROI</span>
-                        <div class="p-2 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="trending-up"
-                                class="w-5 h-5"></i></div>
-                    </div>
-                    <div id="dispROI" class="text-2xl font-bold text-sky-400">---</div>
-                    <div class="text-xs text-gray-500 mt-2">Based on acquisition benchmark</div>
-                </div>
-
-                <!-- Live End-User Sites -->
-                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Live Websites</span>
-                        <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i data-lucide="laptop"
-                                class="w-5 h-5"></i></div>
-                    </div>
-                    <div id="dispLiveCount" class="text-2xl font-bold text-white">---</div>
-                    <div class="text-xs text-gray-500 mt-2">Active running end-user sites</div>
-                </div>
-
-                <!-- Domain Age -->
-                <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Domain Age</span>
-                        <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400"><i data-lucide="calendar"
-                                class="w-5 h-5"></i></div>
-                    </div>
-                    <div id="dispAge" class="text-2xl font-bold text-white">---</div>
-                    <div class="text-xs text-gray-500 mt-2">Registration longevity</div>
-                </div>
+                <p class="text-gray-300 font-medium">Analyzing WHOIS, DNSBL, MX & Valuation Metrics...</p>
             </div>
 
-            <!-- Extended Data Sections -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Dashboard Content (Hidden by default until search) -->
+            <div id="resultsContainer" class="hidden space-y-6">
 
-                <!-- Target Buyer Profile -->
-                <div class="glass-card rounded-2xl p-6">
-                    <div class="flex items-center gap-3 mb-5 border-b border-gray-800 pb-3">
-                        <i data-lucide="target" class="w-5 h-5 text-sky-400"></i>
-                        <h3 class="font-bold text-lg text-white">Target Buyer Sectors</h3>
+                <!-- Top Summary Banner -->
+                <div
+                    class="glass-card rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-sky-500">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center text-sky-400 border border-gray-700">
+                            <i data-lucide="globe" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <h2 id="dispDomain" class="text-2xl font-bold text-white">---</h2>
+                            <p class="text-sm text-gray-400 flex items-center gap-2 mt-0.5">
+                                <i data-lucide="server" class="w-4 h-4 text-gray-500"></i> IP: <span id="dispIP"
+                                    class="text-gray-300 font-mono">---</span>
+                            </p>
+                        </div>
                     </div>
-                    <ul id="targetStartupsList" class="space-y-3">
-                        <!-- Dynamic content -->
-                    </ul>
+                    <a id="pdfDownloadBtn" href="#" target="_blank"
+                        class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="file-down" class="w-5 h-5"></i>
+                        <span>Download PDF Report</span>
+                    </a>
                 </div>
 
-                <!-- Connected Ecosystem & Active Sites -->
-                <div class="glass-card rounded-2xl p-6">
-                    <div class="flex items-center gap-3 mb-5 border-b border-gray-800 pb-3">
-                        <i data-lucide="link" class="w-5 h-5 text-indigo-400"></i>
-                        <h3 class="font-bold text-lg text-white">Active Live Websites</h3>
+                <!-- Key Metrics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <!-- Est. Valuation -->
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Est.
+                                Valuation</span>
+                            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="dollar-sign"
+                                    class="w-5 h-5"></i></div>
+                        </div>
+                        <div id="dispValuation" class="text-2xl font-bold text-emerald-400">---</div>
+                        <div class="text-xs text-gray-500 mt-2">Market Liquidity Estimate</div>
                     </div>
-                    <ul id="liveSitesList" class="space-y-3">
-                        <!-- Dynamic content -->
-                    </ul>
+
+                    <!-- Projected ROI -->
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Projected
+                                ROI</span>
+                            <div class="p-2 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="trending-up"
+                                    class="w-5 h-5"></i></div>
+                        </div>
+                        <div id="dispROI" class="text-2xl font-bold text-sky-400">---</div>
+                        <div class="text-xs text-gray-500 mt-2">Based on acquisition benchmark</div>
+                    </div>
+
+                    <!-- Live End-User Sites -->
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Live
+                                Websites</span>
+                            <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400"><i data-lucide="laptop"
+                                    class="w-5 h-5"></i></div>
+                        </div>
+                        <div id="dispLiveCount" class="text-2xl font-bold text-white">---</div>
+                        <div class="text-xs text-gray-500 mt-2">Active running end-user sites</div>
+                    </div>
+
+                    <!-- Domain Age -->
+                    <div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Domain Age</span>
+                            <div class="p-2 rounded-lg bg-purple-500/10 text-purple-400"><i data-lucide="calendar"
+                                    class="w-5 h-5"></i></div>
+                        </div>
+                        <div id="dispAge" class="text-2xl font-bold text-white">---</div>
+                        <div class="text-xs text-gray-500 mt-2">Registration longevity</div>
+                    </div>
+                </div>
+
+                <!-- Extended Data Sections -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Target Buyer Profile -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-5 border-b border-gray-800 pb-3">
+                            <i data-lucide="target" class="w-5 h-5 text-sky-400"></i>
+                            <h3 class="font-bold text-lg text-white">Target Buyer Sectors</h3>
+                        </div>
+                        <ul id="targetStartupsList" class="space-y-3">
+                            <!-- Dynamic content -->
+                        </ul>
+                    </div>
+
+                    <!-- Connected Ecosystem & Active Sites -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-5 border-b border-gray-800 pb-3">
+                            <i data-lucide="link" class="w-5 h-5 text-indigo-400"></i>
+                            <h3 class="font-bold text-lg text-white">Active Live Websites</h3>
+                        </div>
+                        <ul id="liveSitesList" class="space-y-3">
+                            <!-- Dynamic content -->
+                        </ul>
+                    </div>
+
                 </div>
 
             </div>
 
         </div>
 
+        <!-- JavaScript Logic -->
+        <script>
+            lucide.createIcons();
+
+            function runAudit() {
+                const domainInput = document.getElementById('domainInput').value.trim();
+                if (!domainInput) return;
+
+                const resultsContainer = document.getElementById('resultsContainer');
+                const loadingState = document.getElementById('loadingState');
+                const btnText = document.getElementById('btnText');
+
+                resultsContainer.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+                btnText.innerText = 'Analyzing...';
+
+                fetch(`/api/v1/audit/${domainInput}`)
+                    .then(res => res.json())
+                    .then(resData => {
+                        const data = resData.data;
+                        const intel = data.deep_intel;
+
+                        document.getElementById('dispDomain').innerText = data.domain;
+                        document.getElementById('dispIP').innerText = data.ip;
+                        document.getElementById('dispValuation').innerText = intel.financials.valuation_range;
+                        document.getElementById('dispROI').innerText = intel.financials.projected_roi;
+                        document.getElementById('dispLiveCount').innerText = intel.live_websites_count + " Active Sites";
+                        document.getElementById('dispAge').innerText = intel.whois.age_years + " Yrs";
+                        document.getElementById('pdfDownloadBtn').href = `/api/v1/download-pdf/${data.domain}`;
+
+                        const startupList = document.getElementById('targetStartupsList');
+                        startupList.innerHTML = intel.target_startups.map(s => `
+                            <li class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/40 border border-gray-700/50">
+                                <div class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="building-2" class="w-4 h-4"></i></div>
+                                <span class="text-sm font-medium text-gray-200">${s}</span>
+                            </li>
+                        `).join('');
+
+                        const sitesList = document.getElementById('liveSitesList');
+                        sitesList.innerHTML = intel.live_websites_list.map(site => `
+                            <li class="flex items-center justify-between p-3 rounded-xl bg-gray-800/40 border border-gray-700/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
+                                    <span class="text-sm font-mono text-gray-300">${site}</span>
+                                </div>
+                                <a href="${site}" target="_blank" class="text-xs text-sky-400 hover:underline flex items-center gap-1">
+                                    Visit <i data-lucide="external-link" class="w-3 h-3"></i>
+                                </a>
+                            </li>
+                        `).join('');
+
+                        lucide.createIcons();
+                        loadingState.classList.add('hidden');
+                        resultsContainer.classList.remove('hidden');
+                        btnText.innerText = 'Analyze';
+                    })
+                    .catch(err => {
+                        console.error("Error fetching audit data:", err);
+                        alert("Failed to analyze domain. Please check backend response.");
+                        loadingState.classList.add('hidden');
+                        btnText.innerText = 'Analyze';
+                    });
+            }
+        </script>
+
+        <!-- Footer Links for SEO & Ahrefs Audit -->
+        <footer style="text-align: center; padding: 25px 10px; font-size: 12px; color: #64748b; background: #0f172a;"
+            class="mt-16">
+            <p style="margin-bottom: 12px;">&copy; 2026 BlacklistMail Radar. All rights reserved.</p>
+            <p style="line-height: 2;">
+                <a href="https://blacklistmail.com/"
+                    style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Home</a> |
+                <a href="/spf-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SPF Checker</a> |
+                <a href="/dmarc-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DMARC Checker</a>
+                |
+                <a href="/dkim-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DKIM Checker</a> |
+                <a href="/spf-generator" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SPF Generator</a>
+                |
+                <a href="/dmarc-generator" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DMARC
+                    Generator</a> |
+                <a href="/bimi-generator" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">BIMI
+                    Generator</a> |
+                <a href="/spam-analyzer" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Spam Analyzer</a>
+                |
+                <a href="/uptime-monitor" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Uptime
+                    Monitor</a> |
+                <a href="/mx-lookup" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">MX Lookup</a> |
+                <a href="/ptr-lookup" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">PTR Lookup</a> |
+                <a href="/ssl-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SSL Checker</a> |
+                <a href="/news" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Security News</a> |
+                <a href="https://blacklistmail.com/sitemap.xml"
+                    style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Sitemap</a>
+            </p>
+        </footer>
+
     </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        lucide.createIcons();
-
-        function runAudit() {
-            const domainInput = document.getElementById('domainInput').value.trim();
-            if (!domainInput) return;
-
-            const resultsContainer = document.getElementById('resultsContainer');
-            const loadingState = document.getElementById('loadingState');
-            const btnText = document.getElementById('btnText');
-
-            // 1. إخفاء النتائج القديمة وإظهار مؤشر التحميل
-            resultsContainer.classList.add('hidden');
-            loadingState.classList.remove('hidden');
-            btnText.innerText = 'Analyzing...';
-
-            // 2. طلب البيانات من الـ API
-            fetch(`/api/v1/audit/${domainInput}`)
-                .then(res => res.json())
-                .then(resData => {
-                    const data = resData.data;
-                    const intel = data.deep_intel;
-
-                    // تحديث القيم بالبيانات الحقيقية للدومين المكتوب
-                    document.getElementById('dispDomain').innerText = data.domain;
-                    document.getElementById('dispIP').innerText = data.ip;
-                    document.getElementById('dispValuation').innerText = intel.financials.valuation_range;
-                    document.getElementById('dispROI').innerText = intel.financials.projected_roi;
-                    document.getElementById('dispLiveCount').innerText = intel.live_websites_count + " Active Sites";
-                    document.getElementById('dispAge').innerText = intel.whois.age_years + " Yrs";
-                    document.getElementById('pdfDownloadBtn').href = `/api/v1/download-pdf/${data.domain}`;
-
-                    // تحديث قائمة الشركات المستهدفة
-                    const startupList = document.getElementById('targetStartupsList');
-                    startupList.innerHTML = intel.target_startups.map(s => `
-                        <li class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/40 border border-gray-700/50">
-                            <div class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400"><i data-lucide="building-2" class="w-4 h-4"></i></div>
-                            <span class="text-sm font-medium text-gray-200">${s}</span>
-                        </li>
-                    `).join('');
-
-                    // تحديث قائمة المواقع الشغالة
-                    const sitesList = document.getElementById('liveSitesList');
-                    sitesList.innerHTML = intel.live_websites_list.map(site => `
-                        <li class="flex items-center justify-between p-3 rounded-xl bg-gray-800/40 border border-gray-700/50">
-                            <div class="flex items-center gap-3">
-                                <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
-                                <span class="text-sm font-mono text-gray-300">${site}</span>
-                            </div>
-                            <a href="${site}" target="_blank" class="text-xs text-sky-400 hover:underline flex items-center gap-1">
-                                Visit <i data-lucide="external-link" class="w-3 h-3"></i>
-                            </a>
-                        </li>
-                    `).join('');
-
-                    // إعادة تحميل الأيقونات وإبراز النتائج الجديدة
-                    lucide.createIcons();
-                    loadingState.classList.add('hidden');
-                    resultsContainer.classList.remove('hidden');
-                    btnText.innerText = 'Analyze';
-                })
-                .catch(err => {
-                    console.error("Error fetching audit data:", err);
-                    alert("Failed to analyze domain. Please check backend response.");
-                    loadingState.classList.add('hidden');
-                    btnText.innerText = 'Analyze';
-                });
-        }
-    </script>
-    <!-- Footer Links for SEO & Ahrefs Audit -->
-<footer style="text-align: center; padding: 25px 10px; font-size: 12px; color: #64748b; background: #0f172a;">
-    <p style="margin-bottom: 12px;">&copy; 2026 BlacklistMail Radar. All rights reserved.</p>
-    <p style="line-height: 2;">
-        <a href="https://blacklistmail.com/" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Home</a> |
-        <a href="/spf-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SPF Checker</a> |
-        <a href="/dmarc-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DMARC Checker</a> |
-        <a href="/dkim-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DKIM Checker</a> |
-        <a href="/spf-generator" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SPF Generator</a> |
-        <a href="/dmarc-generator" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DMARC Generator</a> |
-        <a href="/bimi-generator" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">BIMI Generator</a> |
-        <a href="/spam-analyzer" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Spam Analyzer</a> |
-        <a href="/uptime-monitor" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Uptime Monitor</a> |
-        <a href="/mx-lookup" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">MX Lookup</a> |
-        <a href="/ptr-lookup" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">PTR Lookup</a> |
-        <a href="/ssl-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SSL Checker</a> |
-        <a href="/news" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Security News</a> |
-        <a href="https://blacklistmail.com/sitemap.xml"
-            style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Sitemap</a>
-    </p>
-</footer>
-
 </body>
 
 </html>
