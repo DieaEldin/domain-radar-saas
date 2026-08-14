@@ -1,20 +1,21 @@
 import os
 import ssl
 import socket
+import re
 import urllib.request
 import xml.etree.ElementTree as ET
 import dns.resolver
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Response, Form
 from fastapi.responses import HTMLResponse, FileResponse
 
-# 1. استيراد الدوال الأساسية
+# استيراد الدوال الأساسية
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
 
 app = FastAPI(
     title="BlacklistMail Radar API",
     description="Enterprise Domain Intelligence, Email Security & Automated Monetized SaaS",
-    version="2.0.0",
+    version="2.5.0",
 )
 
 PDF_DIR = "./generated_reports"
@@ -23,10 +24,11 @@ os.makedirs(PDF_DIR, exist_ok=True)
 # CSS موحد واحترافي لجميع الصفحات الفرعية
 COMMON_CSS = """
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-.container { max-width: 800px; margin: 30px auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; }
+.container { max-width: 850px; margin: 30px auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; }
 h1 { color: #fff; font-size: 26px; margin-bottom: 10px; }
 p { color: #94a3b8; line-height: 1.6; }
-input[type="text"], select { padding: 12px 15px; width: 65%; border: 1px solid #475569; border-radius: 6px; font-size: 15px; background: #0f172a; color: #fff; margin-bottom: 10px; }
+input[type="text"], textarea, select { padding: 12px 15px; width: 95%; border: 1px solid #475569; border-radius: 6px; font-size: 15px; background: #0f172a; color: #fff; margin-bottom: 15px; }
+textarea { height: 120px; font-family: inherit; }
 button { padding: 12px 22px; background: #38bdf8; color: #0f172a; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
 button:hover { background: #0284c7; color: #fff; }
 a { color: #38bdf8; text-decoration: none; }
@@ -66,7 +68,7 @@ def get_dashboard():
         return f.read()
 
 
-# --- 1. أداة SPF Checker ---
+# --- 1. SPF Checker ---
 @app.get("/spf-checker", response_class=HTMLResponse)
 @app.post("/spf-checker", response_class=HTMLResponse)
 async def spf_checker(domain: str = Form(default="")):
@@ -92,14 +94,14 @@ async def spf_checker(domain: str = Form(default="")):
     html = f'''<!DOCTYPE html><html><head><title>Free SPF Record Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🛡️ Free SPF Record Checker</h1><p>Validate your Sender Policy Framework (SPF) record in real-time.</p>
-    <form method="POST" action="/spf-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><button type="submit">Check SPF</button></form>
+    <form method="POST" action="/spf-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check SPF</button></form>
     {res_box}{BANNER_HTML}<hr style="border:0; border-top:1px solid #334155; margin:30px 0;">
     <p>Don't have an SPF record? <a href="/spf-generator">Generate an SPF Record here &rarr;</a></p>
     </div></body></html>'''
     return HTMLResponse(content=html)
 
 
-# --- 2. أداة DMARC Checker ---
+# --- 2. DMARC Checker ---
 @app.get("/dmarc-checker", response_class=HTMLResponse)
 @app.post("/dmarc-checker", response_class=HTMLResponse)
 async def dmarc_checker(domain: str = Form(default="")):
@@ -125,14 +127,14 @@ async def dmarc_checker(domain: str = Form(default="")):
     html = f'''<!DOCTYPE html><html><head><title>Free DMARC Record Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔐 Free DMARC Record Checker</h1><p>Test and validate domain DMARC records to prevent spoofing.</p>
-    <form method="POST" action="/dmarc-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><button type="submit">Check DMARC</button></form>
+    <form method="POST" action="/dmarc-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check DMARC</button></form>
     {res_box}{BANNER_HTML}<hr style="border:0; border-top:1px solid #334155; margin:30px 0;">
     <p>Need to create a policy? <a href="/dmarc-generator">Generate a DMARC Record here &rarr;</a></p>
     </div></body></html>'''
     return HTMLResponse(content=html)
 
 
-# --- 3. أداة MX Lookup ---
+# --- 3. MX Lookup ---
 @app.get("/mx-lookup", response_class=HTMLResponse)
 @app.post("/mx-lookup", response_class=HTMLResponse)
 async def mx_lookup(domain: str = Form(default="")):
@@ -156,12 +158,12 @@ async def mx_lookup(domain: str = Form(default="")):
     html = f'''<!DOCTYPE html><html><head><title>Free MX Record Lookup | BlacklistMail</title><style>{COMMON_CSS}</style></head>
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📬 Free MX Lookup Tool</h1><p>Identify active mail servers for any domain.</p>
-    <form method="POST" action="/mx-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><button type="submit">Lookup MX</button></form>
+    <form method="POST" action="/mx-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Lookup MX</button></form>
     {res_box}{BANNER_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
 
-# --- 4. أداة TXT Lookup ---
+# --- 4. TXT Lookup ---
 @app.get("/txt-lookup", response_class=HTMLResponse)
 @app.post("/txt-lookup", response_class=HTMLResponse)
 async def txt_lookup(domain: str = Form(default="")):
@@ -185,12 +187,12 @@ async def txt_lookup(domain: str = Form(default="")):
     html = f'''<!DOCTYPE html><html><head><title>Free TXT Record Lookup | BlacklistMail</title><style>{COMMON_CSS}</style></head>
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📝 Free TXT Record Lookup</h1><p>Inspect all active DNS TXT records.</p>
-    <form method="POST" action="/txt-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><button type="submit">Lookup TXT</button></form>
+    <form method="POST" action="/txt-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Lookup TXT</button></form>
     {res_box}{BANNER_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
 
-# --- 5. أداة مولّد SPF (SPF Generator) ---
+# --- 5. SPF Generator ---
 @app.get("/spf-generator", response_class=HTMLResponse)
 @app.post("/spf-generator", response_class=HTMLResponse)
 async def spf_generator(include_google: str = Form(default="no"), include_outlook: str = Form(default="no"), strictness: str = Form(default="~all")):
@@ -223,7 +225,7 @@ async def spf_generator(include_google: str = Form(default="no"), include_outloo
     return HTMLResponse(content=html)
 
 
-# --- 6. أداة مولّد DMARC (DMARC Generator) ---
+# --- 6. DMARC Generator ---
 @app.get("/dmarc-generator", response_class=HTMLResponse)
 @app.post("/dmarc-generator", response_class=HTMLResponse)
 async def dmarc_generator(policy: str = Form(default="none"), email: str = Form(default="admin@example.com")):
@@ -248,7 +250,81 @@ async def dmarc_generator(policy: str = Form(default="none"), email: str = Form(
     return HTMLResponse(content=html)
 
 
-# --- 7. أداة Reverse DNS / PTR Lookup ---
+# --- 7. BIMI Record Generator (جديد 🌟) ---
+@app.get("/bimi-generator", response_class=HTMLResponse)
+@app.post("/bimi-generator", response_class=HTMLResponse)
+async def bimi_generator(svg_url: str = Form(default="https://example.com/logo.svg")):
+    clean_url = svg_url.strip()
+    generated_record = f"v=BIMI1; l={clean_url}; a=;"
+
+    html = f'''<!DOCTYPE html><html><head><title>Free BIMI Record Generator | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
+    <h1>🎨 Free BIMI Record Generator</h1><p>Display your official brand logo inside Gmail and Yahoo inboxes.</p>
+    <form method="POST" action="/bimi-generator">
+        <label>HTTPS URL of your SVG Logo:</label><br>
+        <input type="text" name="svg_url" value="{clean_url}" required><br>
+        <button type="submit">Generate BIMI Record</button>
+    </form>
+    <div class="res-box"><h3 style="margin:0;">Generated BIMI Record (TXT for default._bimi):</h3><code>{generated_record}</code></div>
+    {BANNER_HTML}</div></body></html>'''
+    return HTMLResponse(content=html)
+
+
+# --- 8. Spam Words Analyzer (جديد 🌟) ---
+@app.get("/spam-analyzer", response_class=HTMLResponse)
+@app.post("/spam-analyzer", response_class=HTMLResponse)
+async def spam_analyzer(email_body: str = Form(default="")):
+    spam_words = ["free", "buy now", "guaranteed", "earn money", "no risk", "100%", "click here", "urgent", "winner", "cash"]
+    found_triggers = []
+    
+    if email_body:
+        lower_text = email_body.lower()
+        for word in spam_words:
+            if re.search(r'\b' + re.escape(word) + r'\b', lower_text):
+                found_triggers.append(word)
+
+    res_box = ""
+    if email_body:
+        if found_triggers:
+            triggers_str = ", ".join([f"'{w}'" for w in found_triggers])
+            res_box = f'<div class="err-box">⚠️ <strong>Spam Triggers Detected!</strong> Your message contains high-risk spam keywords: <code>{triggers_str}</code>. Consider removing them to improve inbox rate.</div>'
+        else:
+            res_box = '<div class="res-box">✅ <strong>Clean Email Content!</strong> No common spam trigger words were detected in your text.</div>'
+
+    html = f'''<!DOCTYPE html><html><head><title>Email Spam Words & Content Analyzer | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
+    <h1>📧 Free Email Spam Content Analyzer</h1><p>Scan your email copy for trigger words that land messages in Spam folders.</p>
+    <form method="POST" action="/spam-analyzer">
+        <label>Paste your Email Subject or Body Text:</label><br>
+        <textarea name="email_body" placeholder="Paste your message here..." required>{email_body}</textarea><br>
+        <button type="submit">Analyze Content</button>
+    </form>
+    {res_box}{BANNER_HTML}</div></body></html>'''
+    return HTMLResponse(content=html)
+
+
+# --- 9. Automated Uptime & Deliverability Monitor (جديد 🌟) ---
+@app.get("/uptime-monitor", response_class=HTMLResponse)
+def uptime_monitor():
+    html = f'''<!DOCTYPE html><html><head><title>24/7 Automated Domain & Email Uptime Monitor | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
+    <h1>📡 Automated 24/7 Monitoring (Enterprise SaaS)</h1>
+    <p>Get instant SMS & Telegram notifications if your domain gets blacklisted, SSL expires, or MX records fail.</p>
+    
+    <div style="background:#0f172a; padding:20px; border-radius:8px; border:1px solid #334155; margin:20px 0;">
+        <h3 style="color:#38bdf8; margin-top:0;">Features Included:</h3>
+        <ul style="color:#94a3b8; line-height:1.8;">
+            <li>Continuous Blacklist Auditing (Over 100+ RBLs)</li>
+            <li>SSL Certificate Expiration Reminders (7-day advance alert)</li>
+            <li>DNS Drift & MX Record Change Tracking</li>
+            <li>Weekly Automated PDF Security Reports to your Inbox</li>
+        </ul>
+    </div>
+    {BANNER_HTML}</div></body></html>'''
+    return HTMLResponse(content=html)
+
+
+# --- 10. PTR Lookup & SSL Checker ---
 @app.get("/ptr-lookup", response_class=HTMLResponse)
 @app.post("/ptr-lookup", response_class=HTMLResponse)
 async def ptr_lookup(ip: str = Form(default="")):
@@ -269,12 +345,11 @@ async def ptr_lookup(ip: str = Form(default="")):
     html = f'''<!DOCTYPE html><html><head><title>Free Reverse DNS PTR Lookup | BlacklistMail</title><style>{COMMON_CSS}</style></head>
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔄 Reverse DNS (PTR) Lookup</h1><p>Verify if an IP address resolves to a valid domain hostname.</p>
-    <form method="POST" action="/ptr-lookup"><input type="text" name="ip" placeholder="e.g. 8.8.8.8" value="{clean_ip}" required><button type="submit">Lookup PTR</button></form>
+    <form method="POST" action="/ptr-lookup"><input type="text" name="ip" placeholder="e.g. 8.8.8.8" value="{clean_ip}" required><br><button type="submit">Lookup PTR</button></form>
     {res_box}{BANNER_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
 
-# --- 8. أداة SSL Certificate Checker ---
 @app.get("/ssl-checker", response_class=HTMLResponse)
 @app.post("/ssl-checker", response_class=HTMLResponse)
 async def ssl_checker(domain: str = Form(default="")):
@@ -298,12 +373,12 @@ async def ssl_checker(domain: str = Form(default="")):
     html = f'''<!DOCTYPE html><html><head><title>Free SSL Certificate Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔒 Free SSL Certificate Checker</h1><p>Inspect SSL expiration dates and issuer details instantly.</p>
-    <form method="POST" action="/ssl-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><button type="submit">Check SSL</button></form>
+    <form method="POST" action="/ssl-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check SSL</button></form>
     {res_box}{BANNER_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
 
-# --- 9. قسم الأخبار الأمنية التلقائي (Security News Feed) ---
+# --- 11. Security News ---
 @app.get("/news", response_class=HTMLResponse)
 def get_security_news():
     news_items = []
@@ -329,7 +404,7 @@ def get_security_news():
     return HTMLResponse(content=html)
 
 
-# --- 10. sitemap.xml المحدث ---
+# --- 12. Sitemap.xml المحدث لـ 12 أداة صفحة ---
 @app.get("/sitemap.xml")
 def get_sitemap():
     sitemap_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -341,6 +416,9 @@ def get_sitemap():
     <url><loc>https://blacklistmail.com/txt-lookup</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/spf-generator</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/dmarc-generator</loc><priority>0.8</priority></url>
+    <url><loc>https://blacklistmail.com/bimi-generator</loc><priority>0.8</priority></url>
+    <url><loc>https://blacklistmail.com/spam-analyzer</loc><priority>0.8</priority></url>
+    <url><loc>https://blacklistmail.com/uptime-monitor</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/ptr-lookup</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/ssl-checker</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/news</loc><priority>0.8</priority></url>
