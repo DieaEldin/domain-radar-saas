@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Response
 from fastapi.responses import HTMLResponse, FileResponse
 
 # 1. استيراد دالة الفحص ودالة الإحصائيات ودالة الـ PDF
@@ -34,7 +34,40 @@ def get_dashboard():
         return f.read()
 
 
-# 5. API endpoint جديد لإرجاع الإحصائيات العامة الحيّة (Live Dashboard Stats)
+# 5. مسار خريطة الموقع sitemap.xml لحل مشكلة Ahrefs Audit
+@app.get("/sitemap.xml")
+def get_sitemap():
+    """إرجاع خريطة الموقع بتنسيق XML حقيقي لتأكيد أرشفة الصفحات وتقييم Ahrefs"""
+    sitemap_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://blacklistmail.com/</loc>
+        <lastmod>2026-08-14</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://blacklistmail.com/dashboard</loc>
+        <lastmod>2026-08-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset>"""
+    return Response(content=sitemap_xml, media_type="application/xml")
+
+
+# 6. مسار ملف robots.txt لتوجيه العناكب إلى خريطة الموقع
+@app.get("/robots.txt")
+def get_robots():
+    """إرجاع ملف robots.txt مع تحديد موقع الخريطة"""
+    robots_text = """User-agent: *
+Allow: /
+
+Sitemap: https://blacklistmail.com/sitemap.xml"""
+    return Response(content=robots_text, media_type="text/plain")
+
+
+# 7. API endpoint لإرجاع الإحصائيات العامة الحيّة (Live Dashboard Stats)
 @app.get("/api/v1/stats")
 def get_global_stats():
     """إرجاع الإحصائيات العامة الحيّة للـ Dashboard (البند 4)"""
@@ -45,7 +78,7 @@ def get_global_stats():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 6. API endpoint لإرجاع نتائج الفحص الشامل كـ JSON
+# 8. API endpoint لإرجاع نتائج الفحص الشامل كـ JSON
 @app.get("/api/v1/audit/{domain}")
 def audit_domain(domain: str):
     """إرجاع بيانات الفحص الشاملة للدومين بتنسيق JSON متضمنة (SPF/DMARC/RBL Guides)"""
@@ -63,7 +96,7 @@ def audit_domain(domain: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 7. API endpoint لتوليد وتحميل ملف الـ PDF بالتصميم المطور
+# 9. API endpoint لتوليد وتحميل ملف الـ PDF بالتصميم المطور
 @app.get("/api/v1/download-pdf/{domain}")
 def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     """توليد تقرير PDF احترافي وتحميله مباشرة مع مسحه تلقائياً بعد الإرسال"""
@@ -96,7 +129,7 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
         )
 
 
-# 8. التشغيل المباشر عند استدعاء الملف
+# 10. التشغيل المباشر عند استدعاء الملف
 if __name__ == "__main__":
     import uvicorn
 
