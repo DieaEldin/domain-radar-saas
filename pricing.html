@@ -5,8 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API & Pricing — BlacklistMail Radar</title>
+
+    <!-- Meta Description & SEO -->
+    <meta name="description"
+        content="Flexible API and SaaS subscription plans for real-time domain blacklist detection, IP reputation, and MX/SPF monitoring.">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://blacklistmail.com/sitemap.xml" />
+
+    <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Styling -->
     <style>
         body {
             background-color: #0b0f19;
@@ -25,70 +34,279 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        .radar-glow {
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.12);
+        }
+
+        .partner-glow {
+            box-shadow: 0 0 25px rgba(129, 140, 248, 0.15);
+        }
     </style>
 </head>
 
-<body class="min-h-screen py-12 px-6">
-    <div class="max-w-6xl mx-auto text-center">
-        <a href="/" class="inline-flex items-center gap-2 text-sky-400 hover:underline mb-8 text-sm">← Back to
-            Dashboard</a>
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">API & Pricing <span class="gradient-text">Plans</span></h1>
-        <p class="text-gray-400 max-w-2xl mx-auto mb-12">Scalable domain security intelligence and real-time DNSBL
-            monitoring APIs for developers and enterprises.</p>
+<body class="min-h-screen flex flex-col justify-between">
 
-        <!-- Pricing Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Free -->
-            <div class="glass-card p-8 rounded-2xl text-left border border-gray-800">
-                <h3 class="text-xl font-bold text-white mb-2">Starter</h3>
-                <div class="text-3xl font-extrabold text-white mb-6">$0 <span
-                        class="text-xs text-gray-400 font-normal">/ month</span></div>
-                <ul class="space-y-3 text-sm text-gray-300 mb-8">
-                    <li class="flex items-center gap-2">✔ 50 Free Audit Checks / mo</li>
-                    <li class="flex items-center gap-2">✔ Manual SPF & DMARC Lookups</li>
-                    <li class="flex items-center gap-2">✔ Basic Email Alerts</li>
-                </ul>
-                <button
-                    class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold transition-all">Get
-                    Started</button>
+    <div>
+        <!-- Top Header Navigation -->
+        <nav
+            class="border-b border-gray-800 bg-gray-900/60 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-sky-500/10 p-2.5 rounded-xl border border-sky-500/20 text-sky-400">
+                    <i data-lucide="radar" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <div>
+                    <a href="/" class="text-xl font-bold tracking-tight text-white block">
+                        BlacklistMail <span class="gradient-text">Radar</span>
+                    </a>
+                    <span class="block text-xs text-gray-400">Enterprise Security & API Infrastructure</span>
+                </div>
             </div>
 
-            <!-- Pro (Featured) -->
-            <div class="glass-card p-8 rounded-2xl text-left border-2 border-sky-500 relative">
-                <span
-                    class="absolute -top-3 right-6 bg-sky-500 text-black text-xs font-bold px-3 py-1 rounded-full uppercase">Most
-                    Popular</span>
-                <h3 class="text-xl font-bold text-white mb-2">Pro Business</h3>
-                <div class="text-3xl font-extrabold text-sky-400 mb-6">$49 <span
-                        class="text-xs text-gray-400 font-normal">/ month</span></div>
-                <ul class="space-y-3 text-sm text-gray-300 mb-8">
-                    <li class="flex items-center gap-2">✔ 10,000 API Requests / mo</li>
-                    <li class="flex items-center gap-2">✔ Real-time Telegram & SMS Alerts</li>
-                    <li class="flex items-center gap-2">✔ Automated PDF Report Generator</li>
-                    <li class="flex items-center gap-2">✔ 24/7 Uptime & DNSBL Monitoring</li>
-                </ul>
-                <button
-                    class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold transition-all">Start
-                    14-Day Free Trial</button>
+            <a href="/"
+                class="inline-flex items-center gap-2 text-xs font-semibold text-sky-400 bg-sky-500/10 hover:bg-sky-500/20 px-4 py-2 rounded-xl border border-sky-500/30 transition-all">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Pricing Section Header -->
+        <div class="max-w-6xl mx-auto px-6 py-12 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 mb-6 backdrop-blur-md">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-sky-400"></i>
+                <span>Monetization & Partner Infrastructure</span>
             </div>
 
-            <!-- Enterprise API -->
-            <div class="glass-card p-8 rounded-2xl text-left border border-gray-800">
-                <h3 class="text-xl font-bold text-white mb-2">Enterprise API</h3>
-                <div class="text-3xl font-extrabold text-white mb-6">$199 <span
-                        class="text-xs text-gray-400 font-normal">/ month</span></div>
-                <ul class="space-y-3 text-sm text-gray-300 mb-8">
-                    <li class="flex items-center gap-2">✔ Unlimited API Access</li>
-                    <li class="flex items-center gap-2">✔ Dedicated IP Scanning Nodes</li>
-                    <li class="flex items-center gap-2">✔ Custom Webhook Integrations</li>
-                    <li class="flex items-center gap-2">✔ Priority SLA Support</li>
-                </ul>
-                <button
-                    class="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold transition-all">Contact
-                    Enterprise Sales</button>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+                Scalable Plans & <span class="gradient-text">Developer APIs</span>
+            </h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed mb-12">
+                Automated DNSBL monitoring, enterprise MX/SPF audits, and instant webhook alerts designed for domain
+                investors, agencies, and developers.
+            </p>
+
+            <!-- Pricing Grid (3 Distinct Cards) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch">
+
+                <!-- 1. Starter / Free Plan -->
+                <div
+                    class="glass-card p-8 rounded-2xl flex flex-col justify-between border border-gray-800 hover:border-gray-700 transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Starter</h3>
+                            <span class="p-2 rounded-xl bg-gray-800 text-gray-400">
+                                <i data-lucide="user" class="w-5 h-5"></i>
+                            </span>
+                        </div>
+                        <div class="text-4xl font-extrabold text-white mb-2">$0 <span
+                                class="text-xs text-gray-400 font-normal">/ month</span></div>
+                        <p class="text-xs text-gray-400 mb-6 border-b border-gray-800/80 pb-4">Ideal for individual
+                            domain
+                            lookups and basic deliverability checks.</p>
+
+                        <ul class="space-y-3.5 text-sm text-gray-300 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>50 Free Domain Audits / mo</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Manual SPF & DMARC Lookup</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Standard DNSBL Checking</span>
+                            </li>
+                            <li class="flex items-center gap-2.5 text-gray-500 line-through">
+                                <i data-lucide="x" class="w-4 h-4 text-gray-600 flex-shrink-0"></i>
+                                <span>API Access</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="/"
+                        class="w-full py-3 text-center rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-sm transition-all block">
+                        Use Free Version
+                    </a>
+                </div>
+
+                <!-- 2. Pro Business / Featured Plan -->
+                <div
+                    class="glass-card p-8 rounded-2xl flex flex-col justify-between border-2 border-sky-500 relative radar-glow transform md:-translate-y-2 transition-all">
+                    <span
+                        class="absolute -top-3.5 right-6 bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">Most
+                        Popular</span>
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Pro SaaS</h3>
+                            <span class="p-2 rounded-xl bg-sky-500/10 text-sky-400">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </span>
+                        </div>
+                        <div class="text-4xl font-extrabold text-sky-400 mb-2">$49 <span
+                                class="text-xs text-gray-400 font-normal">/ month</span></div>
+                        <p class="text-xs text-gray-400 mb-6 border-b border-gray-800/80 pb-4">Designed for active
+                            domain
+                            portfolio managers and IT teams.</p>
+
+                        <ul class="space-y-3.5 text-sm text-gray-300 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>10,000 API Calls / mo</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Real-time Telegram &amp; SMS Alerts</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Automated PDF Report Export</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>24/7 Uptime &amp; DNSBL Monitoring</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button disabled
+                        class="w-full py-3 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/30 font-semibold text-sm cursor-not-allowed">
+                        SaaS Subscription Coming Soon
+                    </button>
+                </div>
+
+                <!-- 3. Enterprise API Plan -->
+                <div
+                    class="glass-card p-8 rounded-2xl flex flex-col justify-between border border-gray-800 hover:border-gray-700 transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Enterprise API</h3>
+                            <span class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400">
+                                <i data-lucide="cpu" class="w-5 h-5"></i>
+                            </span>
+                        </div>
+                        <div class="text-4xl font-extrabold text-white mb-2">$199 <span
+                                class="text-xs text-gray-400 font-normal">/ month</span></div>
+                        <p class="text-xs text-gray-400 mb-6 border-b border-gray-800/80 pb-4">High-volume security
+                            scanning API for cybersecurity platforms.</p>
+
+                        <ul class="space-y-3.5 text-sm text-gray-300 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Unlimited API Rate Limit</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Dedicated DNS Scanning Nodes</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Custom Webhooks Integration</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <span>Priority 24/7 SLA Support</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button disabled
+                        class="w-full py-3 rounded-xl bg-gray-800/60 text-gray-400 font-semibold text-sm cursor-not-allowed">
+                        Enterprise Access Pending
+                    </button>
+                </div>
+
             </div>
+
+            <!-- Active Partner Deals & Referral Links Section -->
+            <div
+                class="mt-16 glass-card p-8 rounded-2xl border border-sky-500/30 text-center max-w-4xl mx-auto partner-glow">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">
+                    <i data-lucide="gift" class="w-3.5 h-3.5"></i>
+                    <span>Official Partner Discounts & Referral Deals</span>
+                </div>
+
+                <h3 class="text-2xl font-bold text-white mb-2">Exclusive Hosting & Business Mail Offers</h3>
+                <p class="text-gray-400 text-sm mb-8 max-w-xl mx-auto">
+                    Get special enterprise discounts for domain web hosting and custom Google Workspace mailboxes
+                    through our official referral partner links.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <!-- Hostinger Affiliate Banner -->
+                    <div
+                        class="p-6 rounded-xl bg-gray-900/90 border border-gray-800 flex flex-col justify-between hover:border-indigo-500/50 transition-all">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="server" class="w-5 h-5 text-indigo-400"></i> Hostinger Web
+                                </span>
+                                <span
+                                    class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md font-semibold">Up
+                                    to 75% OFF</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-6 leading-relaxed">
+                                High-performance hosting, free domain, free SSL, and automated daily backups for your
+                                web applications.
+                            </p>
+                        </div>
+                        <!-- استبدل الرابط أدناه برابط الأفلييت الخاص بك لـ Hostinger -->
+                        <a href="https://www.hostinger.com/?REFERRAL_ID_HERE" target="_blank" rel="noopener noreferrer"
+                            class="w-full py-3 text-center rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-md">
+                            <span>Claim Hostinger Deal</span>
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+
+                    <!-- Google Workspace Affiliate Banner -->
+                    <div
+                        class="p-6 rounded-xl bg-gray-900/90 border border-gray-800 flex flex-col justify-between hover:border-sky-500/50 transition-all">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="mail" class="w-5 h-5 text-sky-400"></i> Google Workspace
+                                </span>
+                                <span
+                                    class="text-xs bg-sky-500/20 text-sky-300 px-2.5 py-1 rounded-md font-semibold">10%
+                                    OFF Code</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-6 leading-relaxed">
+                                Professional business email (@yourdomain.com), secure cloud storage, and team
+                                productivity apps.
+                            </p>
+                        </div>
+                        <!-- استبدل الرابط أدناه برابط الأفلييت الخاص بك لـ Google Workspace -->
+                        <a href="https://workspace.google.com/?REFERRAL_ID_HERE" target="_blank"
+                            rel="noopener noreferrer"
+                            class="w-full py-3 text-center rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-md">
+                            <span>Get Google Workspace</span>
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
+
+    <!-- Footer Links -->
+    <footer style="text-align: center; padding: 25px 10px; font-size: 12px; color: #64748b; background: #0f172a;"
+        class="mt-12">
+        <p style="margin-bottom: 12px;">&copy; 2026 BlacklistMail Radar. All rights reserved.</p>
+        <p style="line-height: 2;">
+            <a href="https://blacklistmail.com/" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Home</a>
+            |
+            <a href="/spf-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SPF Checker</a> |
+            <a href="/dmarc-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DMARC Checker</a> |
+            <a href="/dkim-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">DKIM Checker</a> |
+            <a href="/pricing" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">API &amp; Pricing</a> |
+            <a href="/uptime-monitor" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Uptime Monitor</a> |
+            <a href="https://blacklistmail.com/sitemap.xml"
+                style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Sitemap</a>
+        </p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 
 </html>
