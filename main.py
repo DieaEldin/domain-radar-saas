@@ -526,10 +526,20 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
 # ==========================================
 @app.get("/pricing", response_class=HTMLResponse)
 async def read_pricing():
-    pricing_file = os.path.join("templates", "pricing.html")
-    if not os.path.exists(pricing_file):
+    # الحصول على المسار الأساسي للمشروع
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 1. البحث داخل مجلد templates
+    pricing_path = os.path.join(base_dir, "templates", "pricing.html")
+    
+    # 2. إذا لم يجده، يبحث في المجلد الرئيسي للبرنامج
+    if not os.path.exists(pricing_path):
+        pricing_path = os.path.join(base_dir, "pricing.html")
+        
+    if not os.path.exists(pricing_path):
         raise HTTPException(status_code=404, detail="Pricing page template not found.")
-    with open(pricing_file, "r", encoding="utf-8") as f:
+        
+    with open(pricing_path, "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
 if __name__ == "__main__":
     import uvicorn
