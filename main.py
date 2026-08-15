@@ -524,9 +524,13 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
 # ==========================================
 # Pricing & API Route
 # ==========================================
-@app.route('/pricing')
-def pricing():
-    return render_template('pricing.html')
+@app.get("/pricing", response_class=HTMLResponse)
+async def read_pricing():
+    pricing_file = os.path.join("templates", "pricing.html")
+    if not os.path.exists(pricing_file):
+        raise HTTPException(status_code=404, detail="Pricing page template not found.")
+    with open(pricing_file, "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read())
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
