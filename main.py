@@ -76,6 +76,34 @@ MONETIZATION_HTML = """
 def clean_domain_name(domain: str) -> str:
     return domain.strip().lower().replace("http://", "").replace("https://", "").split("/")[0]
 
+def build_head_tags(title: str, description: str, canonical_url: str) -> str:
+    """بناء وسوم SEO الموحدة لجميع الصفحات الفرعية لحل مشاكل Open Graph و HTML lang و Meta Descriptions"""
+    return f"""
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <meta name="description" content="{description}">
+    <link rel="canonical" href="{canonical_url}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{canonical_url}">
+    <meta property="og:title" content="{title}">
+    <meta property="og:description" content="{description}">
+    <meta property="og:image" content="https://blacklistmail.com/static/og-image.png">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{canonical_url}">
+    <meta name="twitter:title" content="{title}">
+    <meta name="twitter:description" content="{description}">
+    <meta name="twitter:image" content="https://blacklistmail.com/static/og-image.png">
+
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://blacklistmail.com/sitemap.xml" />
+    <style>{COMMON_CSS}</style>
+</head>
+"""
 
 # --- Dashboard ---
 @app.get("/", response_class=HTMLResponse)
@@ -88,7 +116,7 @@ def get_dashboard():
         return f.read()
 
 
-# --- 1. DKIM Checker (جديد 🌟) ---
+# --- 1. DKIM Checker ---
 @app.get("/dkim-checker", response_class=HTMLResponse)
 @app.post("/dkim-checker", response_class=HTMLResponse)
 async def dkim_checker(domain: str = Form(default=""), selector: str = Form(default="google")):
@@ -113,7 +141,13 @@ async def dkim_checker(domain: str = Form(default=""), selector: str = Form(defa
     if error and clean_dom:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free DKIM Record Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free DKIM Record Checker & Lookup Tool | BlacklistMail",
+        description="Verify and inspect public DKIM DNS records instantly to validate email signature integrity.",
+        canonical_url="https://blacklistmail.com/dkim-checker"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔑 Free DKIM Record Checker</h1><p>Validate your DomainKeys Identified Mail (DKIM) public key record instantly.</p>
     <form method="POST" action="/dkim-checker">
@@ -150,7 +184,13 @@ async def spf_checker(domain: str = Form(default="")):
     if error and clean_dom:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free SPF Record Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free SPF Record Checker & Validation Tool | BlacklistMail",
+        description="Validate your Sender Policy Framework (SPF) record in real time to prevent spoofing.",
+        canonical_url="https://blacklistmail.com/spf-checker"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🛡️ Free SPF Record Checker</h1><p>Validate your Sender Policy Framework (SPF) record in real-time.</p>
     <form method="POST" action="/spf-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check SPF</button></form>
@@ -183,7 +223,13 @@ async def dmarc_checker(domain: str = Form(default="")):
     if error and clean_dom:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free DMARC Record Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free DMARC Record Checker Tool | BlacklistMail",
+        description="Inspect and check DMARC TXT records online to protect domain email deliverability.",
+        canonical_url="https://blacklistmail.com/dmarc-checker"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔐 Free DMARC Record Checker</h1><p>Test and validate domain DMARC records to prevent spoofing.</p>
     <form method="POST" action="/dmarc-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check DMARC</button></form>
@@ -214,7 +260,13 @@ async def mx_lookup(domain: str = Form(default="")):
     if error and clean_dom:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free MX Record Lookup | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free MX Record Lookup Tool | BlacklistMail",
+        description="Identify active mail exchange servers and priority records for any domain.",
+        canonical_url="https://blacklistmail.com/mx-lookup"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📬 Free MX Lookup Tool</h1><p>Identify active mail servers for any domain.</p>
     <form method="POST" action="/mx-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Lookup MX</button></form>
@@ -243,7 +295,13 @@ async def txt_lookup(domain: str = Form(default="")):
     if error and clean_dom:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free TXT Record Lookup | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free DNS TXT Record Lookup | BlacklistMail",
+        description="Inspect all active DNS TXT records for verification, SPF, DKIM, and site ownership.",
+        canonical_url="https://blacklistmail.com/txt-lookup"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📝 Free TXT Record Lookup</h1><p>Inspect all active DNS TXT records.</p>
     <form method="POST" action="/txt-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Lookup TXT</button></form>
@@ -264,7 +322,13 @@ async def spf_generator(include_google: str = Form(default="no"), include_outloo
     inc_str = " " + " ".join(includes) if includes else ""
     generated_record = f"v=spf1 mx a{inc_str} {strictness}"
 
-    html = f'''<!DOCTYPE html><html><head><title>Free SPF Record Generator | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free SPF Record Generator | BlacklistMail",
+        description="Generate a custom, valid SPF DNS record for Google Workspace, Outlook, or custom servers.",
+        canonical_url="https://blacklistmail.com/spf-generator"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>⚙️ Free SPF Record Generator</h1><p>Generate a customized SPF record for your domain in seconds.</p>
     <form method="POST" action="/spf-generator">
@@ -290,7 +354,13 @@ async def spf_generator(include_google: str = Form(default="no"), include_outloo
 async def dmarc_generator(policy: str = Form(default="none"), email: str = Form(default="admin@example.com")):
     generated_record = f"v=DMARC1; p={policy}; rua=mailto:{email};"
 
-    html = f'''<!DOCTYPE html><html><head><title>Free DMARC Record Generator | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free DMARC Record Generator | BlacklistMail",
+        description="Create customized DMARC records with email reporting and custom security policies.",
+        canonical_url="https://blacklistmail.com/dmarc-generator"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🛠️ Free DMARC Record Generator</h1><p>Create a valid DMARC record to secure your email domain.</p>
     <form method="POST" action="/dmarc-generator">
@@ -316,7 +386,13 @@ async def bimi_generator(svg_url: str = Form(default="https://example.com/logo.s
     clean_url = svg_url.strip()
     generated_record = f"v=BIMI1; l={clean_url}; a=;"
 
-    html = f'''<!DOCTYPE html><html><head><title>Free BIMI Record Generator | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free BIMI Record Generator | BlacklistMail",
+        description="Generate a BIMI TXT record to show your official brand logo in supported inbox providers.",
+        canonical_url="https://blacklistmail.com/bimi-generator"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🎨 Free BIMI Record Generator</h1><p>Display your official brand logo inside Gmail and Yahoo inboxes.</p>
     <form method="POST" action="/bimi-generator">
@@ -350,7 +426,13 @@ async def spam_analyzer(email_body: str = Form(default="")):
         else:
             res_box = '<div class="res-box">✅ <strong>Clean Email Content!</strong> No common spam trigger words were detected in your text.</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Email Spam Words & Content Analyzer | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Email Spam Content Analyzer | BlacklistMail",
+        description="Analyze email text and subject lines for spam trigger words to boost inbox deliverability.",
+        canonical_url="https://blacklistmail.com/spam-analyzer"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📧 Free Email Spam Content Analyzer</h1><p>Scan your email copy for trigger words that land messages in Spam folders.</p>
     <form method="POST" action="/spam-analyzer">
@@ -365,7 +447,13 @@ async def spam_analyzer(email_body: str = Form(default="")):
 # --- 10. Automated Uptime Monitor ---
 @app.get("/uptime-monitor", response_class=HTMLResponse)
 def uptime_monitor():
-    html = f'''<!DOCTYPE html><html><head><title>24/7 Automated Domain & Email Uptime Monitor | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Automated Domain & Email Uptime Monitor | BlacklistMail",
+        description="Get instant 24/7 alerts for domain blacklist changes, SSL expiry, and DNS MX record issues.",
+        canonical_url="https://blacklistmail.com/uptime-monitor"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📡 Automated 24/7 Monitoring (Enterprise SaaS)</h1>
     <p>Get instant SMS & Telegram notifications if your domain gets blacklisted, SSL expires, or MX records fail.</p>
@@ -401,7 +489,13 @@ async def ptr_lookup(ip: str = Form(default="")):
     if error and clean_ip:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free Reverse DNS PTR Lookup | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free Reverse DNS PTR Lookup Tool | BlacklistMail",
+        description="Lookup reverse DNS (PTR) records for IP addresses to confirm mail server identity.",
+        canonical_url="https://blacklistmail.com/ptr-lookup"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔄 Reverse DNS (PTR) Lookup</h1><p>Verify if an IP address resolves to a valid domain hostname.</p>
     <form method="POST" action="/ptr-lookup"><input type="text" name="ip" placeholder="e.g. 8.8.8.8" value="{clean_ip}" required><br><button type="submit">Lookup PTR</button></form>
@@ -429,7 +523,13 @@ async def ssl_checker(domain: str = Form(default="")):
     if error and clean_dom:
         res_box = f'<div class="err-box">⚠️ {error}</div>'
 
-    html = f'''<!DOCTYPE html><html><head><title>Free SSL Certificate Checker | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+    head = build_head_tags(
+        title="Free SSL Certificate Expiry Checker | BlacklistMail",
+        description="Inspect SSL/TLS certificate validity, issuer, and expiration date online.",
+        canonical_url="https://blacklistmail.com/ssl-checker"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>🔒 Free SSL Certificate Checker</h1><p>Inspect SSL expiration dates and issuer details instantly.</p>
     <form method="POST" action="/ssl-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check SSL</button></form>
@@ -456,7 +556,14 @@ def get_security_news():
         news_items.append('<div class="news-card"><p>Automated Feed Loading... Check back in a few minutes.</p></div>')
 
     news_html = "".join(news_items)
-    html = f'''<!DOCTYPE html><html><head><title>Cybersecurity & Email Threat Intelligence | BlacklistMail</title><style>{COMMON_CSS}</style></head>
+
+    head = build_head_tags(
+        title="Cybersecurity Threat Feed & News | BlacklistMail",
+        description="Stay updated with real-time email security threats, vulnerabilities, and cyber news.",
+        canonical_url="https://blacklistmail.com/news"
+    )
+
+    html = f'''<!DOCTYPE html><html lang="en">{head}
     <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
     <h1>📰 Live Cybersecurity Threat Feed</h1><p>Real-time security updates, phishing vulnerabilities, and email safety news.</p>
     {news_html}{MONETIZATION_HTML}</div></body></html>'''
@@ -482,6 +589,7 @@ def get_sitemap():
     <url><loc>https://blacklistmail.com/ptr-lookup</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/ssl-checker</loc><priority>0.8</priority></url>
     <url><loc>https://blacklistmail.com/news</loc><priority>0.8</priority></url>
+    <url><loc>https://blacklistmail.com/pricing</loc><priority>0.8</priority></url>
 </urlset>"""
     return Response(content=sitemap_xml, media_type="application/xml")
 
@@ -526,13 +634,9 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
 # ==========================================
 @app.get("/pricing", response_class=HTMLResponse)
 async def read_pricing():
-    # الحصول على المسار الأساسي للمشروع
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # 1. البحث داخل مجلد templates
     pricing_path = os.path.join(base_dir, "templates", "pricing.html")
     
-    # 2. إذا لم يجده، يبحث في المجلد الرئيسي للبرنامج
     if not os.path.exists(pricing_path):
         pricing_path = os.path.join(base_dir, "pricing.html")
         
@@ -541,6 +645,7 @@ async def read_pricing():
         
     with open(pricing_path, "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
