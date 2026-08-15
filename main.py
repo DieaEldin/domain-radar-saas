@@ -521,7 +521,12 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+# ==========================================
+# Pricing & API Route
+# ==========================================
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
