@@ -143,7 +143,7 @@ async def dkim_checker(domain: str = Form(default=""), selector: str = Form(defa
 
     head = build_head_tags(
         title="Free DKIM Record Checker & Lookup Tool | BlacklistMail",
-        description="Verify and inspect public DKIM DNS records instantly to validate email signature integrity.",
+        description="Verify and inspect public DKIM DNS records instantly to validate email signature integrity, ensure domain security, and fix email delivery.",
         canonical_url="https://blacklistmail.com/dkim-checker"
     )
 
@@ -186,7 +186,7 @@ async def spf_checker(domain: str = Form(default="")):
 
     head = build_head_tags(
         title="Free SPF Record Checker & Validation Tool | BlacklistMail",
-        description="Validate your Sender Policy Framework (SPF) record in real time to prevent spoofing.",
+        description="Validate your Sender Policy Framework (SPF) record in real time to prevent email spoofing, improve sender reputation, and pass auth checks.",
         canonical_url="https://blacklistmail.com/spf-checker"
     )
 
@@ -225,7 +225,7 @@ async def dmarc_checker(domain: str = Form(default="")):
 
     head = build_head_tags(
         title="Free DMARC Record Checker Tool | BlacklistMail",
-        description="Inspect and check DMARC TXT records online to protect domain email deliverability.",
+        description="Inspect and check DMARC TXT records online to protect domain email deliverability, enforce strict security policies, and stop phishing.",
         canonical_url="https://blacklistmail.com/dmarc-checker"
     )
 
@@ -262,7 +262,7 @@ async def mx_lookup(domain: str = Form(default="")):
 
     head = build_head_tags(
         title="Free MX Record Lookup Tool | BlacklistMail",
-        description="Identify active mail exchange servers and priority records for any domain.",
+        description="Identify active mail exchange (MX) servers and priority records for any domain to troubleshoot email delivery and routing issues online.",
         canonical_url="https://blacklistmail.com/mx-lookup"
     )
 
@@ -297,7 +297,7 @@ async def txt_lookup(domain: str = Form(default="")):
 
     head = build_head_tags(
         title="Free DNS TXT Record Lookup | BlacklistMail",
-        description="Inspect all active DNS TXT records for verification, SPF, DKIM, and site ownership.",
+        description="Inspect all active DNS TXT records for domain verification, SPF, DKIM, and site ownership records with instant real-time lookup.",
         canonical_url="https://blacklistmail.com/txt-lookup"
     )
 
@@ -324,7 +324,7 @@ async def spf_generator(include_google: str = Form(default="no"), include_outloo
 
     head = build_head_tags(
         title="Free SPF Record Generator | BlacklistMail",
-        description="Generate a custom, valid SPF DNS record for Google Workspace, Outlook, or custom servers.",
+        description="Generate a custom, valid SPF DNS record for Google Workspace, Outlook, or custom servers to maximize inbox delivery and security.",
         canonical_url="https://blacklistmail.com/spf-generator"
     )
 
@@ -356,7 +356,7 @@ async def dmarc_generator(policy: str = Form(default="none"), email: str = Form(
 
     head = build_head_tags(
         title="Free DMARC Record Generator | BlacklistMail",
-        description="Create customized DMARC records with email reporting and custom security policies.",
+        description="Create customized DMARC records with email reporting and custom security policies to safeguard your domain against phishing attacks.",
         canonical_url="https://blacklistmail.com/dmarc-generator"
     )
 
@@ -388,7 +388,7 @@ async def bimi_generator(svg_url: str = Form(default="https://example.com/logo.s
 
     head = build_head_tags(
         title="Free BIMI Record Generator | BlacklistMail",
-        description="Generate a BIMI TXT record to show your official brand logo in supported inbox providers.",
+        description="Generate a BIMI TXT record to show your official brand logo in supported inbox providers like Gmail and Yahoo for higher trust.",
         canonical_url="https://blacklistmail.com/bimi-generator"
     )
 
@@ -428,7 +428,7 @@ async def spam_analyzer(email_body: str = Form(default="")):
 
     head = build_head_tags(
         title="Email Spam Content Analyzer | BlacklistMail",
-        description="Analyze email text and subject lines for spam trigger words to boost inbox deliverability.",
+        description="Analyze email text and subject lines for spam trigger words to boost inbox deliverability and prevent landing in spam folders.",
         canonical_url="https://blacklistmail.com/spam-analyzer"
     )
 
@@ -449,7 +449,7 @@ async def spam_analyzer(email_body: str = Form(default="")):
 def uptime_monitor():
     head = build_head_tags(
         title="Automated Domain & Email Uptime Monitor | BlacklistMail",
-        description="Get instant 24/7 alerts for domain blacklist changes, SSL expiry, and DNS MX record issues.",
+        description="Get instant 24/7 alerts for domain blacklist changes, SSL certificate expiry, and DNS MX record issues to protect reputation.",
         canonical_url="https://blacklistmail.com/uptime-monitor"
     )
 
@@ -491,7 +491,7 @@ async def ptr_lookup(ip: str = Form(default="")):
 
     head = build_head_tags(
         title="Free Reverse DNS PTR Lookup Tool | BlacklistMail",
-        description="Lookup reverse DNS (PTR) records for IP addresses to confirm mail server identity.",
+        description="Lookup reverse DNS (PTR) records for IP addresses to confirm mail server identity and ensure legitimate email authentication.",
         canonical_url="https://blacklistmail.com/ptr-lookup"
     )
 
@@ -525,7 +525,7 @@ async def ssl_checker(domain: str = Form(default="")):
 
     head = build_head_tags(
         title="Free SSL Certificate Expiry Checker | BlacklistMail",
-        description="Inspect SSL/TLS certificate validity, issuer, and expiration date online.",
+        description="Inspect SSL/TLS certificate validity, issuer details, and exact expiration date online to avoid unexpected site downtime.",
         canonical_url="https://blacklistmail.com/ssl-checker"
     )
 
@@ -559,7 +559,7 @@ def get_security_news():
 
     head = build_head_tags(
         title="Cybersecurity Threat Feed & News | BlacklistMail",
-        description="Stay updated with real-time email security threats, vulnerabilities, and cyber news.",
+        description="Stay updated with real-time email security threats, vulnerabilities, phishing tactics, and cyber security news updated continuously.",
         canonical_url="https://blacklistmail.com/news"
     )
 
