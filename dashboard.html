@@ -4,26 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlacklistMail Radar — Enterprise Domain Audit & IP Reputation Engine</title>
 
-    <!-- Meta Description (Optimized for Ahrefs SEO) -->
+    <!-- 1. Dynamic Title (Fixed for SEO) -->
+    <title>{{ page_title if page_title else 'BlacklistMail Radar — Enterprise Domain Audit & IP Reputation Engine' }}
+    </title>
+
+    <!-- 2. Dynamic Meta Description (Fixed for Ahrefs SEO) -->
     <meta name="description"
-        content="Real-time domain blacklist detection, IP reputation checks, and automated MX/SPF security intelligence reports for enterprise email deliverability.">
+        content="{{ page_description if page_description else 'Real-time domain blacklist detection, IP reputation checks, and automated MX/SPF security intelligence reports for enterprise email deliverability.' }}">
 
-    <!-- Open Graph / Facebook / LinkedIn -->
+    <!-- 3. Dynamic Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://blacklistmail.com/">
-    <meta property="og:title" content="BlacklistMail Radar — Enterprise Domain Audit">
+    <meta property="og:url" content="{{ request.url if request else 'https://blacklistmail.com/' }}">
+    <meta property="og:title"
+        content="{{ page_title if page_title else 'BlacklistMail Radar — Enterprise Domain Audit' }}">
     <meta property="og:description"
-        content="Real-time domain blacklist detection and IP reputation intelligence reports.">
+        content="{{ page_description if page_description else 'Real-time domain blacklist detection and IP reputation intelligence reports.' }}">
     <meta property="og:image" content="https://blacklistmail.com/static/og-image.png">
 
-    <!-- Twitter Cards -->
+    <!-- 4. Dynamic Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://blacklistmail.com/">
-    <meta name="twitter:title" content="BlacklistMail Radar — Enterprise Domain Audit">
+    <meta name="twitter:url" content="{{ request.url if request else 'https://blacklistmail.com/' }}">
+    <meta name="twitter:title"
+        content="{{ page_title if page_title else 'BlacklistMail Radar — Enterprise Domain Audit' }}">
     <meta name="twitter:description"
-        content="Real-time domain blacklist detection and IP reputation intelligence reports.">
+        content="{{ page_description if page_description else 'Real-time domain blacklist detection and IP reputation intelligence reports.' }}">
     <meta name="twitter:image" content="https://blacklistmail.com/static/og-image.png">
 
     <!-- Sitemap Reference -->
@@ -139,9 +144,8 @@
                     class="text-gray-300 hover:text-sky-400 transition-colors hidden sm:inline-block">Security News</a>
                 <a href="/uptime-monitor"
                     class="text-gray-300 hover:text-sky-400 transition-colors hidden md:inline-block">Uptime Monitor</a>
-                <a href="/uptime-monitor"
-                    <!-- استبدل هذا السطر -->
-                    <a href="/pricing" class="text-sky-400 hover:text-sky-300 font-semibold hidden md:inline-block">API & Pricing</a>
+                <a href="/pricing" class="text-sky-400 hover:text-sky-300 font-semibold hidden md:inline-block">API &
+                    Pricing</a>
 
                 <span
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -394,6 +398,7 @@
                 <a href="/mx-lookup" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">MX Lookup</a> |
                 <a href="/ptr-lookup" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">PTR Lookup</a> |
                 <a href="/ssl-checker" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">SSL Checker</a> |
+                <a href="/pricing" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Pricing</a> |
                 <a href="/news" style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Security News</a> |
                 <a href="https://blacklistmail.com/sitemap.xml"
                     style="color: #38bdf8; margin: 0 6px; text-decoration: none;">Sitemap</a>
