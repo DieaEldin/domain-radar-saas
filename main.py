@@ -225,7 +225,7 @@ async def dmarc_checker(domain: str = Form(default="")):
 
     head = build_head_tags(
         title="Free DMARC Record Checker Tool | BlacklistMail",
-        description="Inspect and check DMARC TXT records online to protect domain email deliverability, enforce strict security policies, and stop phishing.",
+        description="Inspect and check DMARC TXT records online to protect domain email deliverability and prevent email spoofing attacks easily.",
         canonical_url="https://blacklistmail.com/dmarc-checker"
     )
 
