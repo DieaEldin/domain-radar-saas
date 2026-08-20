@@ -7,8 +7,11 @@ import xml.etree.ElementTree as ET
 import dns.resolver
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Response, Form
 from fastapi.responses import HTMLResponse, FileResponse
-from fastapi.responses import FileResponse
 
+# 1. إنشاء تطبيق FastAPI أولاً
+app = FastAPI()
+
+# 2. تعريف مسارات الصفحات الجديدة بعد إنشاء app
 @app.get("/bimi-inspector", response_class=FileResponse)
 async def read_bimi_inspector():
     return FileResponse("bimi-inspector.html")
@@ -16,7 +19,6 @@ async def read_bimi_inspector():
 @app.get("/delisting-directory", response_class=FileResponse)
 async def read_delisting_directory():
     return FileResponse("delisting-directory.html")
-
 # استيراد الدوال الأساسية
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
