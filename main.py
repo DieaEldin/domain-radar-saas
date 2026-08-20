@@ -1,33 +1,17 @@
-import os
-import ssl
-import socket
-import re
-import urllib.request
-import xml.etree.ElementTree as ET
-import dns.resolver
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Response, Form
-from fastapi.responses import HTMLResponse, FileResponse
 
-# 1. إنشاء تطبيق FastAPI أولاً
-app = FastAPI()
-
-# 2. تعريف مسارات الصفحات الجديدة بعد إنشاء app
-@app.get("/bimi-inspector", response_class=FileResponse)
-async def read_bimi_inspector():
-    return FileResponse("bimi-inspector.html")
-
-@app.get("/delisting-directory", response_class=FileResponse)
-async def read_delisting_directory():
-    return FileResponse("delisting-directory.html")
 # استيراد الدوال الأساسية
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
+from routers import spf
+
+
 
 app = FastAPI(
     title="BlacklistMail Radar API",
     description="Enterprise Domain Intelligence, Email Security & Automated Monetized SaaS",
     version="3.0.0",
 )
+app.include_router(spf.router)
 
 PDF_DIR = "./generated_reports"
 os.makedirs(PDF_DIR, exist_ok=True)
@@ -173,42 +157,7 @@ async def dkim_checker(domain: str = Form(default=""), selector: str = Form(defa
 
 
 # --- 2. SPF Checker ---
-@app.get("/spf-checker", response_class=HTMLResponse)
-@app.post("/spf-checker", response_class=HTMLResponse)
-async def spf_checker(domain: str = Form(default="")):
-    spf_record, error = None, None
-    clean_dom = clean_domain_name(domain)
-    if clean_dom:
-        try:
-            answers = dns.resolver.resolve(clean_dom, 'TXT')
-            for rdata in answers:
-                txt_string = rdata.to_text().strip('"')
-                if txt_string.startswith('v=spf1'):
-                    spf_record = txt_string
-                    break
-            if not spf_record:
-                error = "No SPF record found for this domain."
-        except Exception:
-            error = "Unable to resolve DNS records. Please check the domain."
 
-    res_box = f'<div class="res-box"><h3 style="margin:0;">✅ Valid SPF Record Found:</h3><code>{spf_record}</code></div>' if spf_record else ""
-    if error and clean_dom:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free SPF Record Checker & Validation Tool | BlacklistMail",
-        description="Validate your Sender Policy Framework (SPF) record in real time to prevent email spoofing, improve sender reputation, and pass auth checks.",
-        canonical_url="https://blacklistmail.com/spf-checker"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🛡️ Free SPF Record Checker</h1><p>Validate your Sender Policy Framework (SPF) record in real-time.</p>
-    <form method="POST" action="/spf-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check SPF</button></form>
-    {res_box}{MONETIZATION_HTML}<hr style="border:0; border-top:1px solid #334155; margin:30px 0;">
-    <p>Don't have an SPF record? <a href="/spf-generator">Generate an SPF Record here &rarr;</a></p>
-    </div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 3. DMARC Checker ---
