@@ -3,6 +3,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from fastapi import FastAPI, BackgroundTasks, HTTPException, Response
 from fastapi.responses import HTMLResponse, FileResponse
+from routers import txtlookup
 
 # استيراد الدوال الأساسية للمحرك
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
