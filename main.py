@@ -3,6 +3,8 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from fastapi import FastAPI, BackgroundTasks, HTTPException, Response
 from fastapi.responses import HTMLResponse, FileResponse
+from datetime import datetime
+from routers.news import NEWS_DATA
 from routers import txtlookup
 
 # استيراد الدوال الأساسية للمحرك
@@ -188,26 +190,46 @@ def get_security_news():
 # --- Sitemap & Robots ---
 @app.get("/sitemap.xml")
 def get_sitemap():
-    sitemap_xml = """<?xml version="1.0" encoding="UTF-8"?>
+    today = datetime.now().strftime("%Y-%m-%d")
+    
+    # قائمة الصفحات والأدوات الثابتة
+    static_urls = [
+        ("https://blacklistmail.com/", "1.0"),
+        ("https://blacklistmail.com/spf-checker", "0.8"),
+        ("https://blacklistmail.com/dmarc-checker", "0.8"),
+        ("https://blacklistmail.com/dkim-checker", "0.8"),
+        ("https://blacklistmail.com/mx-lookup", "0.8"),
+        ("https://blacklistmail.com/txt-lookup", "0.8"),
+        ("https://blacklistmail.com/spf-generator", "0.8"),
+        ("https://blacklistmail.com/dmarc-generator", "0.8"),
+        ("https://blacklistmail.com/bimi-generator", "0.8"),
+        ("https://blacklistmail.com/spam-analyzer", "0.8"),
+        ("https://blacklistmail.com/uptime-monitor", "0.8"),
+        ("https://blacklistmail.com/ptr-lookup", "0.8"),
+        ("https://blacklistmail.com/ssl-checker", "0.8"),
+        ("https://blacklistmail.com/news", "0.8"),
+        ("https://blacklistmail.com/pricing", "0.8"),
+    ]
+    
+    xml_entries = []
+    
+    # 1. إضافة الصفحات الثابتة مع التعديل والملاءمة
+    for url, priority in static_urls:
+        xml_entries.append(f"    <url><loc>{url}</loc><lastmod>{today}</lastmod><priority>{priority}</priority></url>")
+        
+    # 2. إضافة روابط المقالات الأخبارية الفرعية ديناميكياً
+    for slug, article in NEWS_DATA.items():
+        art_date = article.get("date", today)
+        xml_entries.append(f"    <url><loc>https://blacklistmail.com/news/{slug}</loc><lastmod>{art_date}</lastmod><priority>0.7</priority></url>")
+        
+    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url><loc>https://blacklistmail.com/</loc><priority>1.0</priority></url>
-    <url><loc>https://blacklistmail.com/spf-checker</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/dmarc-checker</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/dkim-checker</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/mx-lookup</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/txt-lookup</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/spf-generator</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/dmarc-generator</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/bimi-generator</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/spam-analyzer</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/uptime-monitor</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/ptr-lookup</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/ssl-checker</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/news</loc><priority>0.8</priority></url>
-    <url><loc>https://blacklistmail.com/pricing</loc><priority>0.8</priority></url>
+{'\n'.join(xml_entries)}
 </urlset>"""
+
     return Response(content=sitemap_xml, media_type="application/xml")
 
+الفوائد بعد هذا التعديل:
 @app.get("/robots.txt")
 def get_robots():
     return Response(content="User-agent: *\nAllow: /\nSitemap: https://blacklistmail.com/sitemap.xml", media_type="text/plain")
