@@ -1,28 +1,22 @@
 import os
-from fastapi.responses import HTMLResponse, FileResponse  # <-- أضف HTMLResponse هنا
-# استيراد الدوال الأساسية
+import urllib.request
+import xml.etree.ElementTree as ET
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Response
+from fastapi.responses import HTMLResponse, FileResponse
+
+# استيراد الدوال الأساسية للمحرك
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
-from routers import spf
-from routers import dmarc
-from routers.dmarc import router as dmarc_router
-from routers import bimi
-from routers import security
-from routers import dns
-from routers import dkim
-from routers import company 
-from routers import services
-from routers.company import router as company_router
-from routers.services import router as services_router
-from fastapi import FastAPI
 
-
+# استيراد الـ Routers الخاصة بالأدوات والصفحات
+from routers import spf, dmarc, dkim, bimi, security, dns, company, services
 
 app = FastAPI(
     title="BlacklistMail Radar API",
     description="Enterprise Domain Intelligence, Email Security & Automated Monetized SaaS",
     version="3.0.0",
 )
+
 # 1. ربط أدوات الفحص والأمان
 app.include_router(spf.router)       # SPF Tools
 app.include_router(dmarc.router)     # DMARC Tools
@@ -30,19 +24,12 @@ app.include_router(dkim.router)      # DKIM Checker
 app.include_router(bimi.router)      # BIMI Tools
 app.include_router(security.router)  # Security & SSL
 app.include_router(dns.router)       # DNS Lookups (MX, PTR)
-app.include_router(company_router)
-app.include_router(services_router)
 
 # 2. ربط الخدمات والصفحات الإدارية
 app.include_router(services.router)  # Delisting, Uptime, News, Platform
 app.include_router(company.router)   # Pricing, About, Contact, Status, Sitemap
 
- # 1. استدعاء الـ router الخاص بالصفحات التعريفية والفرعية
-from routers.company import router as company_router
-
-
-# <--- ربط bimi مع السيرفر
-
+# إعداد مجلد حفظ ملفات الـ PDF المؤقتة
 PDF_DIR = "./generated_reports"
 os.makedirs(PDF_DIR, exist_ok=True)
 
@@ -78,7 +65,6 @@ code { background: #0f172a; padding: 12px; display: block; border-radius: 6px; f
 .news-card p { margin: 0; font-size: 13px; color: #94a3b8; }
 """
 
-# جدول مقارنة الأرباح عالي التحويل
 MONETIZATION_HTML = """
 <div class="affiliate-section">
     <h3 style="margin:0; text-align:center; color:#f8fafc;">⚡ Need Professional & Secure Email Hosting?</h3>
@@ -102,7 +88,6 @@ def clean_domain_name(domain: str) -> str:
     return domain.strip().lower().replace("http://", "").replace("https://", "").split("/")[0]
 
 def build_head_tags(title: str, description: str, canonical_url: str) -> str:
-    """بناء وسوم SEO الموحدة لجميع الصفحات الفرعية لحل مشاكل Open Graph و HTML lang و Meta Descriptions"""
     return f"""
 <head>
     <meta charset="UTF-8">
@@ -140,32 +125,7 @@ def get_dashboard():
     with open(html_file_path, "r", encoding="utf-8") as f:
         return f.read()
 
-
-# --- 1. DKIM Checker ---
-
-
-# --- 2. SPF Checker ---
-
-
-
-# --- 3. DMARC Checker ---
-
-
-# --- 4. MX Lookup ---
-
-# --- 6. SPF Generator ---
-
-
-# --- 7. DMARC Generator ---
-
-
-# --- 8. BIMI Generator ---
-
-
-# --- 9. Spam Words Analyzer ---
-
-
-# --- 10. Automated Uptime Monitor ---
+# --- Automated Uptime Monitor ---
 @app.get("/uptime-monitor", response_class=HTMLResponse)
 def uptime_monitor():
     head = build_head_tags(
@@ -191,11 +151,7 @@ def uptime_monitor():
     {MONETIZATION_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
-
-# --- 11. PTR Lookup & SSL Checker ---
-
-
-# --- 12. Security News ---
+# --- Security News ---
 @app.get("/news", response_class=HTMLResponse)
 def get_security_news():
     news_items = []
@@ -227,8 +183,7 @@ def get_security_news():
     {news_html}{MONETIZATION_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
-
-# --- 13. Sitemap.xml المحدث لـ 13 أداة صفحة ---
+# --- Sitemap & Robots ---
 @app.get("/sitemap.xml")
 def get_sitemap():
     sitemap_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -251,11 +206,9 @@ def get_sitemap():
 </urlset>"""
     return Response(content=sitemap_xml, media_type="application/xml")
 
-
 @app.get("/robots.txt")
 def get_robots():
     return Response(content="User-agent: *\nAllow: /\nSitemap: https://blacklistmail.com/sitemap.xml", media_type="text/plain")
-
 
 # --- APIs ---
 @app.get("/api/v1/stats")
@@ -265,7 +218,6 @@ def get_global_stats():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.get("/api/v1/audit/{domain}")
 def audit_domain(domain: str):
     try:
@@ -273,7 +225,7 @@ def audit_domain(domain: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+# ✅ تعديل وحل مشكلة تحميل الـ PDF مع تنظيف الملفات تلقائياً
 @app.get("/api/v1/download-pdf/{domain}")
 def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     clean_dom = clean_domain_name(domain)
@@ -282,14 +234,19 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     try:
         report_data = generate_audit_report(clean_dom)
         generate_radar_pdf(report_data, pdf_path)
+        
+        # إضافة مهمة خلفية لحذف الملف بعد انتهاء عملية التحميل للعميل
         background_tasks.add_task(os.remove, pdf_path)
-        return FileResponse(path=pdf_path, filename=f"BlacklistMail_Radar_{clean_dom}.pdf", media_type="application/pdf")
+        
+        return FileResponse(
+            path=pdf_path, 
+            filename=f"BlacklistMail_Radar_{clean_dom}.pdf", 
+            media_type="application/pdf"
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# ==========================================
-# Pricing & API Route
-# ==========================================
+# --- Pricing Page ---
 @app.get("/pricing", response_class=HTMLResponse)
 async def read_pricing():
     base_dir = os.path.dirname(os.path.abspath(__file__))
