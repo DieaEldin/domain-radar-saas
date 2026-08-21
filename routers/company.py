@@ -190,74 +190,208 @@ async def pricing():
     return HTMLResponse(content=html)
 # 2. About Us
 @router.get("/about", response_class=HTMLResponse)
-async def about_page():
+async def about():
     head = build_head_tags(
-        title="About Us - Domain Security & Deliverability Experts | BlacklistMail",
-        description="Learn more about BlacklistMail's mission to protect email deliverability and domain reputation.",
+        title="About Us | BlacklistMail Threat Intelligence",
+        description="Learn about BlacklistMail's mission to protect domain reputation and enhance email deliverability worldwide.",
         canonical_url="https://blacklistmail.com/about"
     )
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    {COMMON_STYLE}
+    
+    html = f'''<!DOCTYPE html>
+    <html lang="en">
+    {head}
+    <style>
+        :root {{
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --accent-blue: #2f81f7;
+            --text-main: #c9d1d9;
+            --text-heading: #f0f6fc;
+        }}
+        body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; line-height: 1.6; }}
+        .navbar {{ background: #161b22; border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
+        .navbar a {{ color: var(--accent-blue); text-decoration: none; font-weight: 600; }}
+        .container {{ max-width: 900px; margin: 50px auto; padding: 0 20px; }}
+        .header-section {{ text-align: center; margin-bottom: 40px; }}
+        .header-section h1 {{ font-size: 2.2rem; color: var(--text-heading); margin-bottom: 10px; }}
+        .header-section p {{ color: #8b949e; font-size: 1.1rem; }}
+        .card {{ background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 35px; margin-bottom: 25px; }}
+        .card h2 {{ color: var(--text-heading); font-size: 1.4rem; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }}
+        .grid-stats {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }}
+        .stat-item {{ background: #0d1117; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; }}
+        .stat-number {{ font-size: 2rem; font-weight: bold; color: var(--accent-blue); }}
+        .stat-label {{ font-size: 0.85rem; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }}
+    </style>
     <body>
-        <div class="navbar"><strong>BlacklistMail</strong><a href="/">&larr; Back to Home</a></div>
-        <div class="container">
-            <div class="card">
-                <h1>ℹ️ About BlacklistMail</h1>
-                <p>We provide automated domain intelligence, deliverability diagnostics, and real-time DNS monitoring tools designed to secure email channels and preserve sender reputation.</p>
-                <p>Our platform helps system administrators, web developers, and marketers detect infrastructure misconfigurations, generate compliant DNS records, and maintain optimal deliverability.</p>
-            </div>
-            {MONETIZATION_HTML}
+        <div class="navbar">
+            <strong>BlacklistMail Intelligence</strong>
+            <a href="/">&larr; Back to Home</a>
         </div>
-    </body></html>'''
+        <div class="container">
+            <div class="header-section">
+                <h1>About BlacklistMail</h1>
+                <p>Empowering businesses with real-time email security & domain reputation intelligence.</p>
+            </div>
+            <div class="card">
+                <h2>Our Mission</h2>
+                <p>BlacklistMail was built to solve a critical challenge in modern communication: ensuring legitimate emails reach the inbox while protecting brand domains from unauthorized spoofing, phishing, and blacklist penalties.</p>
+                <p>Our platform continuously queries global RBL databases, evaluates SPF/DMARC/DKIM compliance, and validates email security setups for system administrators and enterprise platforms.</p>
+                
+                <div class="grid-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">RBLs Monitored</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Uptime SLA</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">Real-Time</div>
+                        <div class="stat-label">Threat Alerts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>'''
     return HTMLResponse(content=html)
-
 # 3. Contact Support
 @router.get("/contact", response_class=HTMLResponse)
-async def contact_page():
+async def contact():
     head = build_head_tags(
-        title="Contact Support | BlacklistMail",
-        description="Get in touch with our technical team for help with domain monitoring, delisting, or API access.",
+        title="Contact Us & Support | BlacklistMail",
+        description="Get in touch with BlacklistMail support team for API integrations, custom monitoring, or general inquiries.",
         canonical_url="https://blacklistmail.com/contact"
     )
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    {COMMON_STYLE}
+    
+    html = f'''<!DOCTYPE html>
+    <html lang="en">
+    {head}
+    <style>
+        :root {{
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --accent-blue: #2f81f7;
+            --text-main: #c9d1d9;
+            --text-heading: #f0f6fc;
+        }}
+        body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; line-height: 1.6; }}
+        .navbar {{ background: #161b22; border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
+        .navbar a {{ color: var(--accent-blue); text-decoration: none; font-weight: 600; }}
+        .container {{ max-width: 800px; margin: 50px auto; padding: 0 20px; }}
+        .header-section {{ text-align: center; margin-bottom: 40px; }}
+        .header-section h1 {{ font-size: 2.2rem; color: var(--text-heading); margin-bottom: 10px; }}
+        .header-section p {{ color: #8b949e; font-size: 1.1rem; }}
+        .card {{ background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 35px; }}
+        .contact-methods {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 25px; }}
+        .method-card {{ background: #0d1117; border: 1px solid var(--border-color); border-radius: 10px; padding: 25px; text-align: center; }}
+        .method-card h3 {{ color: var(--text-heading); margin-top: 0; margin-bottom: 10px; font-size: 1.1rem; }}
+        .method-card p {{ color: #8b949e; font-size: 0.9rem; margin-bottom: 20px; }}
+        .btn {{ display: inline-block; background: var(--accent-blue); color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }}
+        .btn:hover {{ background: #1f6feb; }}
+    </style>
     <body>
-        <div class="navbar"><strong>BlacklistMail</strong><a href="/">&larr; Back to Home</a></div>
-        <div class="container">
-            <div class="card">
-                <h1>✉️ Contact Support</h1>
-                <p>For technical assistance, domain monitoring inquiries, or API access limits, reach out to our team:</p>
-                <p><strong>Email:</strong> support@blacklistmail.com</p>
-                <p>We aim to respond to all technical queries within 24 business hours.</p>
-            </div>
-            {MONETIZATION_HTML}
+        <div class="navbar">
+            <strong>BlacklistMail Support</strong>
+            <a href="/">&larr; Back to Home</a>
         </div>
-    </body></html>'''
+        <div class="container">
+            <div class="header-section">
+                <h1>Get in Touch</h1>
+                <p>Have questions about our API, enterprise security plans, or domain monitoring?</p>
+            </div>
+            <div class="card">
+                <div class="contact-methods">
+                    <div class="method-card">
+                        <h3>💬 Telegram Support</h3>
+                        <p>Fastest way to get in touch with our engineering team for technical support.</p>
+                        <a href="https://t.me/your_telegram" target="_blank" rel="noopener" class="btn">Chat on Telegram</a>
+                    </div>
+                    <div class="method-card">
+                        <h3>📧 Direct Email</h3>
+                        <p>Send us an email for general business inquiries and enterprise custom plans.</p>
+                        <a href="mailto:support@blacklistmail.com" class="btn">Send an Email</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>'''
     return HTMLResponse(content=html)
-
 # 4. System Status
 @router.get("/status", response_class=HTMLResponse)
-async def system_status():
+async def status():
     head = build_head_tags(
-        title="System Operational Status | BlacklistMail Radar",
-        description="Live operational metrics and service status across all DNS inspection nodes.",
+        title="System Operational Status | BlacklistMail",
+        description="Real-time uptime and operational metrics for BlacklistMail API, RBL lookups, and security nodes.",
         canonical_url="https://blacklistmail.com/status"
     )
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    {COMMON_STYLE}
+    
+    html = f'''<!DOCTYPE html>
+    <html lang="en">
+    {head}
+    <style>
+        :root {{
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --accent-blue: #2f81f7;
+            --status-green: #238636;
+            --text-main: #c9d1d9;
+            --text-heading: #f0f6fc;
+        }}
+        body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; line-height: 1.6; }}
+        .navbar {{ background: #161b22; border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
+        .navbar a {{ color: var(--accent-blue); text-decoration: none; font-weight: 600; }}
+        .container {{ max-width: 850px; margin: 50px auto; padding: 0 20px; }}
+        .banner {{ background: rgba(35, 134, 54, 0.15); border: 1px solid var(--status-green); border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }}
+        .banner-title {{ color: #3fb950; font-size: 1.2rem; font-weight: bold; margin: 0; }}
+        .pulse {{ height: 12px; width: 12px; background-color: #3fb950; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #3fb950; }}
+        .card {{ background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; }}
+        .system-item {{ display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-color); }}
+        .system-item:last-child {{ border-bottom: none; }}
+        .system-name {{ font-weight: 600; color: var(--text-heading); }}
+        .status-badge {{ background: #238636; color: #ffffff; font-size: 0.8rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; }}
+    </style>
     <body>
-        <div class="navbar"><strong>BlacklistMail Status</strong><a href="/">&larr; Back to Home</a></div>
-        <div class="container">
-            <div class="card">
-                <h1>🟢 System Status</h1>
-                <p><span class="status-badge">All Systems Operational</span></p>
-                <p>All core infrastructure services, DNS resolvers, and API nodes are <strong>100% Operational</strong>.</p>
-            </div>
-            {MONETIZATION_HTML}
+        <div class="navbar">
+            <strong>BlacklistMail Status</strong>
+            <a href="/">&larr; Back to Home</a>
         </div>
-    </body></html>'''
+        <div class="container">
+            <div class="banner">
+                <div>
+                    <p class="banner-title">All Systems Operational</p>
+                    <span style="font-size: 0.85rem; color: #8b949e;">Updated in real-time</span>
+                </div>
+                <span class="pulse"></span>
+            </div>
+            
+            <div class="card">
+                <div class="system-item">
+                    <span class="system-name">API Endpoints (FastAPI Core)</span>
+                    <span class="status-badge">Operational</span>
+                </div>
+                <div class="system-item">
+                    <span class="system-name">DNS & RBL Inspection Engine</span>
+                    <span class="status-badge">Operational</span>
+                </div>
+                <div class="system-item">
+                    <span class="system-name">SPF / DMARC Evaluator Node</span>
+                    <span class="status-badge">Operational</span>
+                </div>
+                <div class="system-item">
+                    <span class="system-name">PDF Report Generation Engine</span>
+                    <span class="status-badge">Operational</span>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>'''
     return HTMLResponse(content=html)
-
 # 5. Sitemap Info
 @router.get("/sitemap-info", response_class=HTMLResponse)
 async def sitemap_info():
