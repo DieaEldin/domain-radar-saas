@@ -9,7 +9,7 @@ from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
 
 # استيراد الـ Routers الخاصة بالأدوات والصفحات
-from routers import spf, dmarc, dkim, bimi, security, dns, company, services
+from routers import spf, dmarc, dkim, bimi, security, dns, company, services, txtlookup
 
 app = FastAPI(
     title="BlacklistMail Radar API",
@@ -24,6 +24,7 @@ app.include_router(dkim.router)      # DKIM Checker
 app.include_router(bimi.router)      # BIMI Tools
 app.include_router(security.router)  # Security & SSL
 app.include_router(dns.router)       # DNS Lookups (MX, PTR)
+app.include_router(txtlookup.router) # TXT Lookup
 
 # 2. ربط الخدمات والصفحات الإدارية
 app.include_router(services.router)  # Delisting, Uptime, News, Platform
