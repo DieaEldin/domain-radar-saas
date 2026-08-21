@@ -1,12 +1,12 @@
-# routers/services.py
-from fastapi import APIRouter, Form
-from fastapi import Request, HTTPException
+from fastapi import APIRouter, Form, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from utils import build_head_tags, MONETIZATION_HTML
 
-router = APIRouter()
+router = APIRouter(tags=["Services"])
 
+# ==========================================
 # 1. Platform / Overview
+# ==========================================
 @router.get("/platform", response_class=HTMLResponse)
 async def platform_page():
     head = build_head_tags(
@@ -20,14 +20,10 @@ async def platform_page():
     {MONETIZATION_HTML}</div></body></html>'''
     return HTMLResponse(content=html)
 
+
+# ==========================================
 # 2. Delisting Directory
-# routers/services.py
-from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
-from utils import build_head_tags
-
-router = APIRouter(tags=["Services"])
-
+# ==========================================
 @router.get("/delisting-directory", response_class=HTMLResponse)
 async def delisting_directory():
     head = build_head_tags(
@@ -112,20 +108,47 @@ async def delisting_directory():
     </body>
     </html>'''
     return HTMLResponse(content=html)
-# 4. Security News
+
+
+# ==========================================
+# 3. Security News Data & Endpoints
+# ==========================================
 NEWS_DATA = {
     "gmail-yahoo-dmarc-updates-2026": {
         "title": "Gmail & Yahoo DMARC Enforcement Updates for 2026",
         "date": "2026-08-20",
         "summary": "Latest requirements for bulk senders regarding SPF, DKIM, and one-click unsubscribe headers.",
-        "content": "<p>Major inbox providers are tightening security protocols. Domains without valid DMARC enforcement risk direct spam placement...</p>",
+        "content": """
+            <p>Inbox providers such as Gmail and Yahoo have strictly enforced authentication mandates for domain senders. Failing to implement required protocols result in immediate inbox rejections or automatic spam classification.</p>
+            
+            <h3 style="color:#fff; margin-top:20px;">Mandatory Security Standards:</h3>
+            <ul style="line-height:1.8;">
+                <li><strong>Strict SPF & DKIM Alignment:</strong> Email headers must pass domain alignment checks for both SPF and DKIM signatures.</li>
+                <li><strong>Enforced DMARC Policy:</strong> Domains must publish an explicit DMARC policy (minimum <code>p=none</code> with reporting, upgrading to <code>p=quarantine</code> or <code>p=reject</code>).</li>
+                <li><strong>One-Click Unsubscribe (RFC 8058):</strong> Bulk marketing messages require standard headers to allow instant user unsubscription.</li>
+                <li><strong>Spam Rate Threshold:</strong> Keep reported spam complaints below <strong>0.10%</strong> (and never exceed 0.30%).</li>
+            </ul>
+
+            <p style="margin-top:20px;">Verify your compliance status immediately to protect your business email reputation.</p>
+        """,
         "image": "https://blacklistmail.com/static/news-dmarc.jpg"
     },
     "bimi-logo-verification-guide": {
         "title": "How BIMI Certification Protects Brand Reputation in Inboxes",
         "date": "2026-08-15",
         "summary": "A comprehensive breakdown of VMC certificates and BIMI DNS record configuration.",
-        "content": "<p>Brand Indicators for Message Identification (BIMI) allows domain owners to display verified logos in user inboxes...</p>",
+        "content": """
+            <p>Brand Indicators for Message Identification (BIMI) empowers verified organizations to display official brand logos directly alongside email messages in user inboxes.</p>
+            
+            <h3 style="color:#fff; margin-top:20px;">Prerequisites to Deploy BIMI:</h3>
+            <ol style="line-height:1.8;">
+                <li><strong>Strict DMARC Policy:</strong> Your DMARC policy must be actively enforced at <code>p=quarantine</code> (at 100% pct) or <code>p=reject</code>.</li>
+                <li><strong>SVG Logo Hosting:</strong> Format your trademarked logo as a square SVG-P/PS file hosted over secure HTTPS.</li>
+                <li><strong>Verified Mark Certificate (VMC):</strong> Acquire a VMC from a recognized Certificate Authority to validate brand ownership.</li>
+            </ol>
+
+            <p style="margin-top:20px;">Deploying BIMI significantly increases email open rates while insulating your domain from phishing spoofs.</p>
+        """,
         "image": "https://blacklistmail.com/static/news-bimi.jpg"
     }
 }
@@ -136,11 +159,11 @@ async def security_news(request: Request):
     articles_html = ""
     for slug, article in NEWS_DATA.items():
         articles_html += f"""
-        <article style="background: #1e293b; padding: 20px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #334155;">
-            <span style="color: #38bdf8; font-size: 13px;">{article['date']}</span>
-            <h2 style="margin: 8px 0;"><a href="/news/{slug}" style="color: #fff; text-decoration: none;">{article['title']}</a></h2>
-            <p style="color: #94a3b8; font-size: 14px;">{article['summary']}</p>
-            <a href="/news/{slug}" style="color: #38bdf8; font-weight: bold; font-size: 14px;">Read Full Article &rarr;</a>
+        <article style="background: #1e293b; padding: 25px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #334155;">
+            <span style="color: #38bdf8; font-size: 13px; font-weight: 600;">{article['date']}</span>
+            <h2 style="margin: 10px 0;"><a href="/news/{slug}" style="color: #fff; text-decoration: none;">{article['title']}</a></h2>
+            <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin-bottom: 15px;">{article['summary']}</p>
+            <a href="/news/{slug}" style="color: #38bdf8; font-weight: bold; font-size: 14px; text-decoration: none;">Read Full Article &rarr;</a>
         </article>
         """
 
@@ -156,9 +179,10 @@ async def security_news(request: Request):
     <meta property="og:description" content="Latest trends in email authentication and domain reputation." />
     <meta property="og:url" content="https://blacklistmail.com/news" />
     <style>
-        body {{ font-family: system-ui, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px 20px; }}
+        body {{ font-family: system-ui, -apple-system, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px 20px; }}
         .container {{ max-width: 800px; margin: 0 auto; }}
         a {{ color: #38bdf8; text-decoration: none; }}
+        a:hover {{ text-decoration: underline; }}
     </style>
 </head>
 <body>
@@ -190,33 +214,34 @@ async def news_detail(slug: str):
     <title>{article['title']} | BlacklistMail News</title>
     <meta name="description" content="{article['summary']}">
     <link rel="canonical" href="https://blacklistmail.com/news/{slug}" />
-    <!-- Open Graph for Social Sharing (LinkedIn & X) -->
     <meta property="og:title" content="{article['title']}" />
     <meta property="og:description" content="{article['summary']}" />
     <meta property="og:image" content="{article['image']}" />
     <meta property="og:type" content="article" />
     <style>
-        body {{ font-family: system-ui, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px 20px; }}
-        .container {{ max-width: 800px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; }}
+        body {{ font-family: system-ui, -apple-system, sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 40px 20px; }}
+        .container {{ max-width: 800px; margin: 0 auto; background: #1e293b; padding: 35px; border-radius: 12px; border: 1px solid #334155; }}
         a {{ color: #38bdf8; text-decoration: none; }}
-        .cta-box {{ background: #0f172a; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 30px; }}
+        a:hover {{ text-decoration: underline; }}
+        .cta-box {{ background: #0f172a; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 35px; border-top: 1px solid #334155; border-right: 1px solid #334155; border-bottom: 1px solid #334155; }}
+        code {{ background: #0f172a; color: #38bdf8; padding: 3px 6px; border-radius: 4px; font-size: 0.9em; }}
     </style>
 </head>
 <body>
     <div class="container">
         <p><a href="/news">&larr; Back to News</a></p>
-        <span style="color: #38bdf8; font-size: 14px;">{article['date']}</span>
-        <h1 style="color: #fff; margin-top: 10px;">{article['title']}</h1>
+        <span style="color: #38bdf8; font-size: 14px; font-weight: 600;">Published: {article['date']}</span>
+        <h1 style="color: #fff; margin-top: 10px; font-size: 26px;">{article['title']}</h1>
         <hr style="border-color: #334155; margin: 20px 0;" />
         
-        <div style="line-height: 1.7; color: #cbd5e1;">
+        <div style="line-height: 1.8; color: #cbd5e1; font-size: 15px;">
             {article['content']}
         </div>
 
         <!-- Internal Linking Box -->
         <div class="cta-box">
-            <h4 style="margin: 0 0 10px 0; color: #fff;">Verify Your Domain Security</h4>
-            <p style="margin: 0; font-size: 14px; color: #94a3b8;">Ensure your domain configuration is compliant. Run a quick check using our <a href="/txt-lookup">DNS TXT Lookup</a> or <a href="/spf-checker">SPF Checker</a> tools.</p>
+            <h4 style="margin: 0 0 10px 0; color: #fff; font-size: 16px;">🔍 Verify Your Domain Security Compliance</h4>
+            <p style="margin: 0; font-size: 14px; color: #94a3b8; line-height: 1.6;">Ensure your email setup meets provider mandates. Perform a instant live audit using our <a href="/dmarc-checker">DMARC Inspector</a>, <a href="/txt-lookup">DNS TXT Lookup</a>, or <a href="/spf-checker">SPF Checker</a> tools.</p>
         </div>
     </div>
 </body>
