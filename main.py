@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 from fastapi import FastAPI, BackgroundTasks, HTTPException, Response
 from fastapi.responses import HTMLResponse, FileResponse
 from datetime import datetime
-from routers.news import NEWS_DATA
 
 # استيراد الدوال الأساسية للمحرك
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
@@ -211,15 +210,8 @@ def get_sitemap():
     ]
     
     xml_entries = []
-    
-    # 1. إضافة الصفحات الثابتة مع التعديل والملاءمة
     for url, priority in static_urls:
         xml_entries.append(f"    <url><loc>{url}</loc><lastmod>{today}</lastmod><priority>{priority}</priority></url>")
-        
-    # 2. إضافة روابط المقالات الأخبارية الفرعية ديناميكياً
-    for slug, article in NEWS_DATA.items():
-        art_date = article.get("date", today)
-        xml_entries.append(f"    <url><loc>https://blacklistmail.com/news/{slug}</loc><lastmod>{art_date}</lastmod><priority>0.7</priority></url>")
         
     sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -247,7 +239,6 @@ def audit_domain(domain: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# ✅ تعديل وحل مشكلة تحميل الـ PDF مع تنظيف الملفات تلقائياً
 @app.get("/api/v1/download-pdf/{domain}")
 def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
     clean_dom = clean_domain_name(domain)
@@ -257,7 +248,6 @@ def download_pdf_report(domain: str, background_tasks: BackgroundTasks):
         report_data = generate_audit_report(clean_dom)
         generate_radar_pdf(report_data, pdf_path)
         
-        # إضافة مهمة خلفية لحذف الملف بعد انتهاء عملية التحميل للعميل
         background_tasks.add_task(os.remove, pdf_path)
         
         return FileResponse(
