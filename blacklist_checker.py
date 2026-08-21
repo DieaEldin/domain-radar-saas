@@ -487,7 +487,7 @@ def check_extended_intelligence(domain_name):
 
 # ==================== 4. MAIN AUDIT DISPATCHER ====================
 def generate_audit_report(domain):
-    """تجميع كافة بيانات التقرير مع الإحصائيات الشاملة والحساب الديناميكي للسكور"""
+    """تجميع كافة بيانات التقرير مع الإحصائيات الشاملة والحساب الديناميكي الدقيق للسكور"""
     clean = (
         domain.strip()
         .lower()
@@ -512,42 +512,49 @@ def generate_audit_report(domain):
     # ==========================================
     calculated_score = 100
 
-    # 1. خصم نقاط القوائم السوداء (خصم 20 نقطة لكل قائمة مدرج بها)
-    listed_count = blacklist_data.get("listed_count", 0)
+    # 1. خصم القوائم السوداء (خصم 20 نقطة لكل قائمة مدرج بها)
+    listed_count = blacklist_data.get("listed_count", 0) if isinstance(blacklist_data, dict) else 0
     calculated_score -= (listed_count * 20)
 
-    # 2. خصم نقاط سجلات الأمان (SPF & DMARC & DKIM)
-    spf_status = str(security_records.get("spf", {}).get("status", "")).upper()
-    if "PASS" not in spf_status and "VALID" not in spf_status:
+    # 2. فحص مرن لسجلات الأمان (SPF / DMARC / DKIM)
+    # نحول كائن السجلات بالكامل إلى نص لتجنب أخطاء هيكلة الـ Dictionary
+    sec_str = str(security_records).lower()
+
+    # فحص SPF
+    if "spf" in security_records:
+        spf_val = str(security_records.get("spf", "")).lower()
+        if not ("valid" in spf_val or "pass" in spf_val or "v=spf1" in spf_val or "true" in spf_val):
+            calculated_score -= 15
+    else:
+        calculated_score -= 15
+
+    # فحص DMARC
+    if "dmarc" in security_records:
+        dmarc_val = str(security_records.get("dmarc", "")).lower()
+        if not ("valid" in dmarc_val or "pass" in dmarc_val or "v=dmarc1" in dmarc_val or "true" in dmarc_val):
+            calculated_score -= 15
+    else:
+        calculated_score -= 15
+
+    # 3. فحص شهادة SSL
+    ssl_str = str(ssl_data).lower()
+    if not ("valid" in ssl_str or "true" in ssl_str or "active" in ssl_str):
         calculated_score -= 10
 
-    dmarc_status = str(security_records.get("dmarc", {}).get("status", "")).upper()
-    if "PASS" not in dmarc_status and "VALID" not in dmarc_status:
-        calculated_score -= 10
-
-    dkim_status = str(security_records.get("dkim", {}).get("status", "")).upper()
-    if "PASS" not in dkim_status and "VALID" not in dkim_status:
-        calculated_score -= 5
-
-    # 3. خصم نقاط شهادة SSL
-    ssl_valid = ssl_data.get("valid", True) if isinstance(ssl_data, dict) else True
-    if not ssl_valid:
-        calculated_score -= 10
-
-    # ضمان عدم خروج النتيجة عن النطاق المسموح (0 - 100)
-    final_score = max(0, min(100, calculated_score))
+    # ضمان عدم خروج النتيجة عن النطاق (10 إلى 100)
+    final_score = max(10, min(100, calculated_score))
 
     return {
         "domain": clean,
         "ip": ip,
         "ssl": ssl_data,
-        "score": final_score,               # 👈 السكور الديناميكي الجديد
-        "reputation_score": final_score,    # 👈 متغير إضافي للأمان
+        "score": final_score,               # 👈 السكور الديناميكي الدقيق
+        "reputation_score": final_score,    # 👈 متغير إضافي
         "deep_intel": deep_intel,
         "email_infra": email_data,
         "blacklist": blacklist_data,
-        "security_records": security_records,  # For Item 1
-        "global_stats": global_stats           # For Item 4
+        "security_records": security_records,
+        "global_stats": global_stats
     }
 
 
