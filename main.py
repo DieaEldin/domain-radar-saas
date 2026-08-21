@@ -5,7 +5,6 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException, Response
 from fastapi.responses import HTMLResponse, FileResponse
 from datetime import datetime
 from routers.news import NEWS_DATA
-from routers import txtlookup
 
 # استيراد الدوال الأساسية للمحرك
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
@@ -229,7 +228,6 @@ def get_sitemap():
 
     return Response(content=sitemap_xml, media_type="application/xml")
 
-الفوائد بعد هذا التعديل:
 @app.get("/robots.txt")
 def get_robots():
     return Response(content="User-agent: *\nAllow: /\nSitemap: https://blacklistmail.com/sitemap.xml", media_type="text/plain")
