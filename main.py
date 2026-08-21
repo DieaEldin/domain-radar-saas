@@ -154,6 +154,8 @@ def uptime_monitor():
     return HTMLResponse(content=html)
 
 # --- Security News ---
+# متغیر عالمي لتخزين الأخبار مؤقتاً في الذاكرة لتفادي بطء التحميل
+NEWS_CACHE = {"data": [], "last_updated": None}
 @app.get("/news", response_class=HTMLResponse)
 def get_security_news():
     news_items = []
