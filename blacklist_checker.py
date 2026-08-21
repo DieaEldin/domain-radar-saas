@@ -487,7 +487,7 @@ def check_extended_intelligence(domain_name):
 
 # ==================== 4. MAIN AUDIT DISPATCHER ====================
 def generate_audit_report(domain):
-    """تجميع كافة بيانات التقرير مع الإحصائيات الشاملة"""
+    """تجميع كافة بيانات التقرير مع الإحصائيات الشاملة والحساب الديناميكي للسكور"""
     clean = (
         domain.strip()
         .lower()
@@ -507,11 +507,42 @@ def generate_audit_report(domain):
     security_records = check_email_security_records(clean)
     global_stats = get_live_dashboard_stats()
 
+    # ==========================================
+    # 🧮 حساب السكور الديناميكي بناءً على الفحص الكامل
+    # ==========================================
+    calculated_score = 100
+
+    # 1. خصم نقاط القوائم السوداء (خصم 20 نقطة لكل قائمة مدرج بها)
+    listed_count = blacklist_data.get("listed_count", 0)
+    calculated_score -= (listed_count * 20)
+
+    # 2. خصم نقاط سجلات الأمان (SPF & DMARC & DKIM)
+    spf_status = str(security_records.get("spf", {}).get("status", "")).upper()
+    if "PASS" not in spf_status and "VALID" not in spf_status:
+        calculated_score -= 10
+
+    dmarc_status = str(security_records.get("dmarc", {}).get("status", "")).upper()
+    if "PASS" not in dmarc_status and "VALID" not in dmarc_status:
+        calculated_score -= 10
+
+    dkim_status = str(security_records.get("dkim", {}).get("status", "")).upper()
+    if "PASS" not in dkim_status and "VALID" not in dkim_status:
+        calculated_score -= 5
+
+    # 3. خصم نقاط شهادة SSL
+    ssl_valid = ssl_data.get("valid", True) if isinstance(ssl_data, dict) else True
+    if not ssl_valid:
+        calculated_score -= 10
+
+    # ضمان عدم خروج النتيجة عن النطاق المسموح (0 - 100)
+    final_score = max(0, min(100, calculated_score))
+
     return {
         "domain": clean,
         "ip": ip,
         "ssl": ssl_data,
-        "score": 94 if blacklist_data["listed_count"] == 0 else 70,
+        "score": final_score,               # 👈 السكور الديناميكي الجديد
+        "reputation_score": final_score,    # 👈 متغير إضافي للأمان
         "deep_intel": deep_intel,
         "email_infra": email_data,
         "blacklist": blacklist_data,
