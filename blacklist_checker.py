@@ -851,19 +851,28 @@ if __name__ == "__main__":
     test_domain = "workplaceemail.com"
     print(f"[*] Running Audit for: {test_domain}...")
 
-  # 1. Run Audit
+# 1. Run Audit
     data = generate_audit_report(test_domain)
     print("[+] Audit Complete!")
-    print(f"[*] Global Stats: {data.get('global_stats')}")
     
-    # طباعة التأكيد على وجود الـ Score في البيانات المرجعة
-    print(f"[*] Score Value: {data.get('score') or data.get('reputation_score')}")
+    # القراءة الآمنة لـ Global Stats مع طباعة السكور الديناميكي للتأكد
+    global_stats = data.get('global_stats', {})
+    security_records = data.get('security_records', {})
+    calculated_score = data.get('score') or data.get('reputation_score') or 'N/A'
+    
+    print(f"[*] Global Stats: {global_stats}")
+    print(f"[*] Calculated Reputation Score: {calculated_score}%")
+    
+    # استخراج حالات الـ SPF و DMARC بشكل آمن لتفادي أخطاء KeyError
+    spf_status = security_records.get('spf', {}).get('status', 'Unknown')
+    dmarc_status = security_records.get('dmarc', {}).get('status', 'Unknown')
+    print(f"[*] Security Records (Item 1): SPF={spf_status}, DMARC={dmarc_status}")
 
-    # 2. Output PDF (استدعاء الدالة الصحيحة المعدلة)
+    # 2. Output PDF (استدعاء دالة الرادار الرسمية المعدلة)
     output_pdf = "audit_report.pdf"
     
-    # ✅ استخدام generate_radar_pdf بدلاً من generate_pdf_report
-    generate_radar_pdf(data, output_pdf) 
+    # ✅ استخدام الدالة الصحيحة التي تعتمد السكور الديناميكي
+    generate_radar_pdf(data, output_pdf)
     
     print(
         f"[✔] Perfect A4 PDF Report generated successfully: {os.path.abspath(output_pdf)}"
