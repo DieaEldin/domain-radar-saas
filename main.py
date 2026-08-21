@@ -1,4 +1,5 @@
-
+import os
+from fastapi.responses import HTMLResponse, FileResponse  # <-- أضف HTMLResponse هنا
 # استيراد الدوال الأساسية
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
@@ -12,6 +13,7 @@ from routers import dkim
 from routers import company 
 from routers import services
 from routers.company import router as company_router
+from routers.services import router as services_router
 from fastapi import FastAPI
 
 
@@ -28,6 +30,8 @@ app.include_router(dkim.router)      # DKIM Checker
 app.include_router(bimi.router)      # BIMI Tools
 app.include_router(security.router)  # Security & SSL
 app.include_router(dns.router)       # DNS Lookups (MX, PTR)
+app.include_router(company_router)
+app.include_router(services_router)
 
 # 2. ربط الخدمات والصفحات الإدارية
 app.include_router(services.router)  # Delisting, Uptime, News, Platform
