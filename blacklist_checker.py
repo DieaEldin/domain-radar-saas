@@ -851,15 +851,20 @@ if __name__ == "__main__":
     test_domain = "workplaceemail.com"
     print(f"[*] Running Audit for: {test_domain}...")
 
-    # 1. Run Audit
+  # 1. Run Audit
     data = generate_audit_report(test_domain)
     print("[+] Audit Complete!")
-    print(f"[*] Global Stats: {data['global_stats']}")
-    print(f"[*] Security Records (Item 1): SPF={data['security_records']['spf']['status']}, DMARC={data['security_records']['dmarc']['status']}")
+    print(f"[*] Global Stats: {data.get('global_stats')}")
+    
+    # طباعة التأكيد على وجود الـ Score في البيانات المرجعة
+    print(f"[*] Score Value: {data.get('score') or data.get('reputation_score')}")
 
-    # 2. Output PDF
+    # 2. Output PDF (استدعاء الدالة الصحيحة المعدلة)
     output_pdf = "audit_report.pdf"
-    generate_pdf_report(data, output_pdf)
+    
+    # ✅ استخدام generate_radar_pdf بدلاً من generate_pdf_report
+    generate_radar_pdf(data, output_pdf) 
+    
     print(
         f"[✔] Perfect A4 PDF Report generated successfully: {os.path.abspath(output_pdf)}"
     )

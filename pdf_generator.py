@@ -9,8 +9,9 @@ def generate_radar_pdf(domain_data: dict, output_pdf_path: str) -> str:
     # 1. Safe Extraction of Top-Level Data
     domain_name = domain_data.get("domain", "Unknown Domain")
     ip_address = domain_data.get("ip", "Unresolved IP")
-    score = domain_data.get("score", 70)
-
+# ✅ البحث عن السكور بأكثر من مسمى محتمل مع حساب القيمة الافتراضية
+    score = domain_data.get("score") or domain_data.get("reputation_score") or domain_data.get("overall_score", 70)
+    
     # 2. Extract Deep Intel & Financials
     deep_intel = domain_data.get("deep_intel", {})
     financials = deep_intel.get("financials", {})
