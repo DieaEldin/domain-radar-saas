@@ -3,6 +3,16 @@
 from blacklist_checker import generate_audit_report, get_live_dashboard_stats
 from pdf_generator import generate_radar_pdf
 from routers import spf
+from routers import dmarc
+from routers.dmarc import router as dmarc_router
+from routers import bimi
+from routers import security
+from routers import dns
+from routers import dkim
+from routers import company 
+from routers import services
+from routers.company import router as company_router
+from fastapi import FastAPI
 
 
 
@@ -11,7 +21,23 @@ app = FastAPI(
     description="Enterprise Domain Intelligence, Email Security & Automated Monetized SaaS",
     version="3.0.0",
 )
-app.include_router(spf.router)
+# 1. ربط أدوات الفحص والأمان
+app.include_router(spf.router)       # SPF Tools
+app.include_router(dmarc.router)     # DMARC Tools
+app.include_router(dkim.router)      # DKIM Checker
+app.include_router(bimi.router)      # BIMI Tools
+app.include_router(security.router)  # Security & SSL
+app.include_router(dns.router)       # DNS Lookups (MX, PTR)
+
+# 2. ربط الخدمات والصفحات الإدارية
+app.include_router(services.router)  # Delisting, Uptime, News, Platform
+app.include_router(company.router)   # Pricing, About, Contact, Status, Sitemap
+
+ # 1. استدعاء الـ router الخاص بالصفحات التعريفية والفرعية
+from routers.company import router as company_router
+
+
+# <--- ربط bimi مع السيرفر
 
 PDF_DIR = "./generated_reports"
 os.makedirs(PDF_DIR, exist_ok=True)
@@ -112,48 +138,6 @@ def get_dashboard():
 
 
 # --- 1. DKIM Checker ---
-@app.get("/dkim-checker", response_class=HTMLResponse)
-@app.post("/dkim-checker", response_class=HTMLResponse)
-async def dkim_checker(domain: str = Form(default=""), selector: str = Form(default="google")):
-    dkim_record, error = None, None
-    clean_dom = clean_domain_name(domain)
-    clean_sel = selector.strip()
-    if clean_dom and clean_sel:
-        try:
-            query_host = f"{clean_sel}._domainkey.{clean_dom}"
-            answers = dns.resolver.resolve(query_host, 'TXT')
-            for rdata in answers:
-                txt_string = rdata.to_text().strip('"')
-                if 'v=DKIM1' in txt_string or 'p=' in txt_string:
-                    dkim_record = txt_string
-                    break
-            if not dkim_record:
-                error = f"No DKIM record found for selector '{clean_sel}' on domain {clean_dom}."
-        except Exception:
-            error = f"Unable to resolve DKIM record for selector '{clean_sel}'."
-
-    res_box = f'<div class="res-box"><h3 style="margin:0;">✅ Valid DKIM Record Found ({clean_sel}._domainkey.{clean_dom}):</h3><code>{dkim_record}</code></div>' if dkim_record else ""
-    if error and clean_dom:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free DKIM Record Checker & Lookup Tool | BlacklistMail",
-        description="Verify and inspect public DKIM DNS records instantly to validate email signature integrity, ensure domain security, and fix email delivery.",
-        canonical_url="https://blacklistmail.com/dkim-checker"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🔑 Free DKIM Record Checker</h1><p>Validate your DomainKeys Identified Mail (DKIM) public key record instantly.</p>
-    <form method="POST" action="/dkim-checker">
-        <label>Domain Name:</label><br>
-        <input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br>
-        <label>DKIM Selector (Default is often 'google', 'k1', or 's1'):</label><br>
-        <input type="text" name="selector" placeholder="e.g. google" value="{clean_sel}" required><br>
-        <button type="submit">Check DKIM</button>
-    </form>
-    {res_box}{MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 2. SPF Checker ---
@@ -161,247 +145,20 @@ async def dkim_checker(domain: str = Form(default=""), selector: str = Form(defa
 
 
 # --- 3. DMARC Checker ---
-@app.get("/dmarc-checker", response_class=HTMLResponse)
-@app.post("/dmarc-checker", response_class=HTMLResponse)
-async def dmarc_checker(domain: str = Form(default="")):
-    dmarc_record, error = None, None
-    clean_dom = clean_domain_name(domain)
-    if clean_dom:
-        try:
-            answers = dns.resolver.resolve(f"_dmarc.{clean_dom}", 'TXT')
-            for rdata in answers:
-                txt_string = rdata.to_text().strip('"')
-                if txt_string.startswith('v=DMARC1'):
-                    dmarc_record = txt_string
-                    break
-            if not dmarc_record:
-                error = "No DMARC record found for this domain."
-        except Exception:
-            error = "Unable to resolve DMARC record."
-
-    res_box = f'<div class="res-box"><h3 style="margin:0;">✅ Valid DMARC Record Found:</h3><code>{dmarc_record}</code></div>' if dmarc_record else ""
-    if error and clean_dom:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free DMARC Record Checker Tool | BlacklistMail",
-        description="Inspect and check DMARC TXT records online to protect domain email deliverability and prevent email spoofing attacks easily.",
-        canonical_url="https://blacklistmail.com/dmarc-checker"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🔐 Free DMARC Record Checker</h1><p>Test and validate domain DMARC records to prevent spoofing.</p>
-    <form method="POST" action="/dmarc-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check DMARC</button></form>
-    {res_box}{MONETIZATION_HTML}<hr style="border:0; border-top:1px solid #334155; margin:30px 0;">
-    <p>Need to create a policy? <a href="/dmarc-generator">Generate a DMARC Record here &rarr;</a></p>
-    </div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 4. MX Lookup ---
-@app.get("/mx-lookup", response_class=HTMLResponse)
-@app.post("/mx-lookup", response_class=HTMLResponse)
-async def mx_lookup(domain: str = Form(default="")):
-    mx_records, error = [], None
-    clean_dom = clean_domain_name(domain)
-    if clean_dom:
-        try:
-            answers = dns.resolver.resolve(clean_dom, 'MX')
-            for rdata in answers:
-                mx_records.append(f"Priority: {rdata.preference} -> Host: {rdata.exchange.to_text()}")
-            if not mx_records:
-                error = "No MX records found."
-        except Exception:
-            error = "Unable to fetch MX records."
-
-    records_html = "".join([f"<code>{r}</code>" for r in mx_records])
-    res_box = f'<div class="res-box"><h3 style="margin:0;">📬 MX Records ({len(mx_records)}):</h3>{records_html}</div>' if mx_records else ""
-    if error and clean_dom:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free MX Record Lookup Tool | BlacklistMail",
-        description="Identify active mail exchange (MX) servers and priority records for any domain to troubleshoot email delivery and routing issues online.",
-        canonical_url="https://blacklistmail.com/mx-lookup"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>📬 Free MX Lookup Tool</h1><p>Identify active mail servers for any domain.</p>
-    <form method="POST" action="/mx-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Lookup MX</button></form>
-    {res_box}{MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
-
-
-# --- 5. TXT Lookup ---
-@app.get("/txt-lookup", response_class=HTMLResponse)
-@app.post("/txt-lookup", response_class=HTMLResponse)
-async def txt_lookup(domain: str = Form(default="")):
-    txt_records, error = [], None
-    clean_dom = clean_domain_name(domain)
-    if clean_dom:
-        try:
-            answers = dns.resolver.resolve(clean_dom, 'TXT')
-            for rdata in answers:
-                txt_records.append(rdata.to_text().strip('"'))
-            if not txt_records:
-                error = "No TXT records found."
-        except Exception:
-            error = "Unable to fetch TXT records."
-
-    records_html = "".join([f"<code>{r}</code>" for r in txt_records])
-    res_box = f'<div class="res-box"><h3 style="margin:0;">📝 TXT Records ({len(txt_records)}):</h3>{records_html}</div>' if txt_records else ""
-    if error and clean_dom:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free DNS TXT Record Lookup | BlacklistMail",
-        description="Inspect all active DNS TXT records for domain verification, SPF, DKIM, and site ownership records with instant real-time lookup.",
-        canonical_url="https://blacklistmail.com/txt-lookup"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>📝 Free TXT Record Lookup</h1><p>Inspect all active DNS TXT records.</p>
-    <form method="POST" action="/txt-lookup"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Lookup TXT</button></form>
-    {res_box}{MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
-
 
 # --- 6. SPF Generator ---
-@app.get("/spf-generator", response_class=HTMLResponse)
-@app.post("/spf-generator", response_class=HTMLResponse)
-async def spf_generator(include_google: str = Form(default="no"), include_outlook: str = Form(default="no"), strictness: str = Form(default="~all")):
-    includes = []
-    if include_google == "yes":
-        includes.append("include:_spf.google.com")
-    if include_outlook == "yes":
-        includes.append("include:spf.protection.outlook.com")
-
-    inc_str = " " + " ".join(includes) if includes else ""
-    generated_record = f"v=spf1 mx a{inc_str} {strictness}"
-
-    head = build_head_tags(
-        title="Free SPF Record Generator | BlacklistMail",
-        description="Generate a custom, valid SPF DNS record for Google Workspace, Outlook, or custom servers to maximize inbox delivery and security.",
-        canonical_url="https://blacklistmail.com/spf-generator"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>⚙️ Free SPF Record Generator</h1><p>Generate a customized SPF record for your domain in seconds.</p>
-    <form method="POST" action="/spf-generator">
-        <label>Include Google Workspace?</label><br>
-        <select name="include_google"><option value="no">No</option><option value="yes" {"selected" if include_google=="yes" else ""}>Yes</option></select><br>
-        <label>Include Microsoft 365 / Outlook?</label><br>
-        <select name="include_outlook"><option value="no">No</option><option value="yes" {"selected" if include_outlook=="yes" else ""}>Yes</option></select><br>
-        <label>Policy Strictness:</label><br>
-        <select name="strictness">
-            <option value="~all" {"selected" if strictness=="~all" else ""}>Soft Fail (~all) - Recommended</option>
-            <option value="-all" {"selected" if strictness=="-all" else ""}>Hard Fail (-all) - Strict</option>
-        </select><br><br>
-        <button type="submit">Generate SPF Record</button>
-    </form>
-    <div class="res-box"><h3 style="margin:0;">Generated SPF Record:</h3><code>{generated_record}</code></div>
-    {MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 7. DMARC Generator ---
-@app.get("/dmarc-generator", response_class=HTMLResponse)
-@app.post("/dmarc-generator", response_class=HTMLResponse)
-async def dmarc_generator(policy: str = Form(default="none"), email: str = Form(default="admin@example.com")):
-    generated_record = f"v=DMARC1; p={policy}; rua=mailto:{email};"
-
-    head = build_head_tags(
-        title="Free DMARC Record Generator | BlacklistMail",
-        description="Create customized DMARC records with email reporting and custom security policies to safeguard your domain against phishing attacks.",
-        canonical_url="https://blacklistmail.com/dmarc-generator"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🛠️ Free DMARC Record Generator</h1><p>Create a valid DMARC record to secure your email domain.</p>
-    <form method="POST" action="/dmarc-generator">
-        <label>Policy (p):</label><br>
-        <select name="policy">
-            <option value="none" {"selected" if policy=="none" else ""}>None (Monitoring only)</option>
-            <option value="quarantine" {"selected" if policy=="quarantine" else ""}>Quarantine (Send to Spam)</option>
-            <option value="reject" {"selected" if policy=="reject" else ""}>Reject (Block unauthenticated emails)</option>
-        </select><br>
-        <label>Aggregate Report Email (rua):</label><br>
-        <input type="text" name="email" value="{email}" required><br>
-        <button type="submit">Generate DMARC Record</button>
-    </form>
-    <div class="res-box"><h3 style="margin:0;">Generated DMARC Record:</h3><code>{generated_record}</code></div>
-    {MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 8. BIMI Generator ---
-@app.get("/bimi-generator", response_class=HTMLResponse)
-@app.post("/bimi-generator", response_class=HTMLResponse)
-async def bimi_generator(svg_url: str = Form(default="https://example.com/logo.svg")):
-    clean_url = svg_url.strip()
-    generated_record = f"v=BIMI1; l={clean_url}; a=;"
-
-    head = build_head_tags(
-        title="Free BIMI Record Generator | BlacklistMail",
-        description="Generate a BIMI TXT record to show your official brand logo in supported inbox providers like Gmail and Yahoo for higher trust.",
-        canonical_url="https://blacklistmail.com/bimi-generator"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🎨 Free BIMI Record Generator</h1><p>Display your official brand logo inside Gmail and Yahoo inboxes.</p>
-    <form method="POST" action="/bimi-generator">
-        <label>HTTPS URL of your SVG Logo:</label><br>
-        <input type="text" name="svg_url" value="{clean_url}" required><br>
-        <button type="submit">Generate BIMI Record</button>
-    </form>
-    <div class="res-box"><h3 style="margin:0;">Generated BIMI Record (TXT for default._bimi):</h3><code>{generated_record}</code></div>
-    {MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 9. Spam Words Analyzer ---
-@app.get("/spam-analyzer", response_class=HTMLResponse)
-@app.post("/spam-analyzer", response_class=HTMLResponse)
-async def spam_analyzer(email_body: str = Form(default="")):
-    spam_words = ["free", "buy now", "guaranteed", "earn money", "no risk", "100%", "click here", "urgent", "winner", "cash"]
-    found_triggers = []
-    
-    if email_body:
-        lower_text = email_body.lower()
-        for word in spam_words:
-            if re.search(r'\b' + re.escape(word) + r'\b', lower_text):
-                found_triggers.append(word)
-
-    res_box = ""
-    if email_body:
-        if found_triggers:
-            triggers_str = ", ".join([f"'{w}'" for w in found_triggers])
-            res_box = f'<div class="err-box">⚠️ <strong>Spam Triggers Detected!</strong> Your message contains high-risk spam keywords: <code>{triggers_str}</code>. Consider removing them to improve inbox rate.</div>'
-        else:
-            res_box = '<div class="res-box">✅ <strong>Clean Email Content!</strong> No common spam trigger words were detected in your text.</div>'
-
-    head = build_head_tags(
-        title="Email Spam Content Analyzer | BlacklistMail",
-        description="Analyze email text and subject lines for spam trigger words to boost inbox deliverability and prevent landing in spam folders.",
-        canonical_url="https://blacklistmail.com/spam-analyzer"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>📧 Free Email Spam Content Analyzer</h1><p>Scan your email copy for trigger words that land messages in Spam folders.</p>
-    <form method="POST" action="/spam-analyzer">
-        <label>Paste your Email Subject or Body Text:</label><br>
-        <textarea name="email_body" placeholder="Paste your message here..." required>{email_body}</textarea><br>
-        <button type="submit">Analyze Content</button>
-    </form>
-    {res_box}{MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 10. Automated Uptime Monitor ---
@@ -432,69 +189,6 @@ def uptime_monitor():
 
 
 # --- 11. PTR Lookup & SSL Checker ---
-@app.get("/ptr-lookup", response_class=HTMLResponse)
-@app.post("/ptr-lookup", response_class=HTMLResponse)
-async def ptr_lookup(ip: str = Form(default="")):
-    ptr_record, error = None, None
-    clean_ip = ip.strip()
-    if clean_ip:
-        try:
-            reversed_dns = dns.reversename.from_address(clean_ip)
-            answers = dns.resolver.resolve(reversed_dns, 'PTR')
-            ptr_record = answers[0].to_text().rstrip('.')
-        except Exception:
-            error = "Could not resolve PTR record for this IP address."
-
-    res_box = f'<div class="res-box"><h3 style="margin:0;">✅ PTR Record Found:</h3><code>{ptr_record}</code></div>' if ptr_record else ""
-    if error and clean_ip:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free Reverse DNS PTR Lookup Tool | BlacklistMail",
-        description="Lookup reverse DNS (PTR) records for IP addresses to confirm mail server identity and ensure legitimate email authentication.",
-        canonical_url="https://blacklistmail.com/ptr-lookup"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🔄 Reverse DNS (PTR) Lookup</h1><p>Verify if an IP address resolves to a valid domain hostname.</p>
-    <form method="POST" action="/ptr-lookup"><input type="text" name="ip" placeholder="e.g. 8.8.8.8" value="{clean_ip}" required><br><button type="submit">Lookup PTR</button></form>
-    {res_box}{MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
-
-
-@app.get("/ssl-checker", response_class=HTMLResponse)
-@app.post("/ssl-checker", response_class=HTMLResponse)
-async def ssl_checker(domain: str = Form(default="")):
-    ssl_info, error = None, None
-    clean_dom = clean_domain_name(domain)
-    if clean_dom:
-        try:
-            ctx = ssl.create_default_context()
-            with socket.create_connection((clean_dom, 443), timeout=5) as sock:
-                with ctx.wrap_socket(sock, server_hostname=clean_dom) as ssock:
-                    cert = ssock.getpeercert()
-                    issuer = dict(x[0] for x in cert['issuer'])
-                    ssl_info = f"Issuer: {issuer.get('organizationName', 'N/A')} | Expires: {cert['notAfter']}"
-        except Exception:
-            error = "Could not verify SSL certificate for this domain."
-
-    res_box = f'<div class="res-box"><h3 style="margin:0;">🔒 SSL Certificate Details:</h3><code>{ssl_info}</code></div>' if ssl_info else ""
-    if error and clean_dom:
-        res_box = f'<div class="err-box">⚠️ {error}</div>'
-
-    head = build_head_tags(
-        title="Free SSL Certificate Expiry Checker | BlacklistMail",
-        description="Inspect SSL/TLS certificate validity, issuer details, and exact expiration date online to avoid unexpected site downtime.",
-        canonical_url="https://blacklistmail.com/ssl-checker"
-    )
-
-    html = f'''<!DOCTYPE html><html lang="en">{head}
-    <body><div class="container"><p><a href="/">&larr; Back to Dashboard</a></p>
-    <h1>🔒 Free SSL Certificate Checker</h1><p>Inspect SSL expiration dates and issuer details instantly.</p>
-    <form method="POST" action="/ssl-checker"><input type="text" name="domain" placeholder="example.com" value="{clean_dom}" required><br><button type="submit">Check SSL</button></form>
-    {res_box}{MONETIZATION_HTML}</div></body></html>'''
-    return HTMLResponse(content=html)
 
 
 # --- 12. Security News ---
