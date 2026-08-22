@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Form, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from utils import build_head_tags, MONETIZATION_HTML
+import httpx
+
 
 router = APIRouter(tags=["Services"])
 
@@ -274,11 +276,16 @@ async def news_detail(slug: str):
 # ==========================================
 # 4. Email Health Score (Comprehensive Audit)
 # ==========================================
-import dns.resolver
 
 # ==========================================
 # 4. Email Health Score (Dynamic Audit)
 # ==========================================
+
+
+# ==========================================
+# 4. Email Health Score (DoH API Audit)
+# ==========================================
+
 @router.get("/email-health-score", response_class=HTMLResponse)
 async def email_health_score_page(domain: str = ""):
     head = build_head_tags(
@@ -294,38 +301,41 @@ async def email_health_score_page(domain: str = ""):
         score = 0
         spf_found, dmarc_found, mx_found = False, False, False
         
-        # 1. Check MX Records
-        try:
-            mx_records = dns.resolver.resolve(domain_input, 'MX')
-            if len(mx_records) > 0:
-                mx_found = True
-                score += 30
-        except Exception:
-            mx_found = False
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            # 1. Check MX Records via Google DoH
+            try:
+                res_mx = await client.get(f"https://dns.google/resolve?name={domain_input}&type=MX")
+                if res_mx.status_code == 200 and "Answer" in res_mx.json():
+                    mx_found = True
+                    score += 30
+            except Exception:
+                pass
 
-        # 2. Check SPF Record
-        try:
-            txt_records = dns.resolver.resolve(domain_input, 'TXT')
-            for txt in txt_records:
-                if 'v=spf1' in txt.to_text():
-                    spf_found = True
-                    score += 35
-                    break
-        except Exception:
-            spf_found = False
+            # 2. Check SPF Record via Google DoH
+            try:
+                res_txt = await client.get(f"https://dns.google/resolve?name={domain_input}&type=TXT")
+                if res_txt.status_code == 200 and "Answer" in res_txt.json():
+                    for ans in res_txt.json()["Answer"]:
+                        if "v=spf1" in ans.get("data", ""):
+                            spf_found = True
+                            score += 35
+                            break
+            except Exception:
+                pass
 
-        # 3. Check DMARC Record
-        try:
-            dmarc_records = dns.resolver.resolve(f"_dmarc.{domain_input}", 'TXT')
-            for txt in dmarc_records:
-                if 'v=DMARC1' in txt.to_text():
-                    dmarc_found = True
-                    score += 35
-                    break
-        except Exception:
-            dmarc_found = False
+            # 3. Check DMARC Record via Google DoH
+            try:
+                res_dmarc = await client.get(f"https://dns.google/resolve?name=_dmarc.{domain_input}&type=TXT")
+                if res_dmarc.status_code == 200 and "Answer" in res_dmarc.json():
+                    for ans in res_dmarc.json()["Answer"]:
+                        if "v=DMARC1" in ans.get("data", ""):
+                            dmarc_found = True
+                            score += 35
+                            break
+            except Exception:
+                pass
 
-        # Status Badges
+        # Badges & Colors
         spf_badge = '<span style="color: #3fb950; font-weight: bold;">✔ Valid</span>' if spf_found else '<span style="color: #f85149; font-weight: bold;">✖ Missing</span>'
         dmarc_badge = '<span style="color: #3fb950; font-weight: bold;">✔ Configured</span>' if dmarc_found else '<span style="color: #f85149; font-weight: bold;">✖ Missing</span>'
         mx_badge = '<span style="color: #3fb950; font-weight: bold;">✔ Detected</span>' if mx_found else '<span style="color: #f85149; font-weight: bold;">✖ No MX Records</span>'
@@ -337,7 +347,7 @@ async def email_health_score_page(domain: str = ""):
             <div style="text-align: center; margin-bottom: 25px;">
                 <h2 style="color: #f0f6fc; margin-bottom: 5px;">Health Score for <span style="color: #2f81f7;">{domain_input}</span></h2>
                 <div style="font-size: 3.5rem; font-weight: bold; color: {score_color}; margin: 10px 0;">{score} / 100</div>
-                <p style="color: #8b949e;">Live DNS Audit Results</p>
+                <p style="color: #8b949e;">Live Google DNS API Results</p>
             </div>
             
             <div style="display: grid; gap: 15px;">
@@ -388,8 +398,7 @@ async def email_health_score_page(domain: str = ""):
     </div>
 </body>
 </html>'''
-    return HTMLResponse(content=html)
-# ==========================================
+    return HTMLResponse(content=html)# ==========================================
 # 5. FAQ Page
 # ==========================================
 @router.get("/faq", response_class=HTMLResponse)
