@@ -274,6 +274,11 @@ async def news_detail(slug: str):
 # ==========================================
 # 4. Email Health Score (Comprehensive Audit)
 # ==========================================
+import dns.resolver
+
+# ==========================================
+# 4. Email Health Score (Dynamic Audit)
+# ==========================================
 @router.get("/email-health-score", response_class=HTMLResponse)
 async def email_health_score_page(domain: str = ""):
     head = build_head_tags(
@@ -286,32 +291,67 @@ async def email_health_score_page(domain: str = ""):
     results_html = ""
     
     if domain_input:
-        # تقييم صوري/مبدئي يعتمد على وجود الدومين لحين ربطه بالفحوصات الحية
-        score = 85
+        score = 0
+        spf_found, dmarc_found, mx_found = False, False, False
+        
+        # 1. Check MX Records
+        try:
+            mx_records = dns.resolver.resolve(domain_input, 'MX')
+            if len(mx_records) > 0:
+                mx_found = True
+                score += 30
+        except Exception:
+            mx_found = False
+
+        # 2. Check SPF Record
+        try:
+            txt_records = dns.resolver.resolve(domain_input, 'TXT')
+            for txt in txt_records:
+                if 'v=spf1' in txt.to_text():
+                    spf_found = True
+                    score += 35
+                    break
+        except Exception:
+            spf_found = False
+
+        # 3. Check DMARC Record
+        try:
+            dmarc_records = dns.resolver.resolve(f"_dmarc.{domain_input}", 'TXT')
+            for txt in dmarc_records:
+                if 'v=DMARC1' in txt.to_text():
+                    dmarc_found = True
+                    score += 35
+                    break
+        except Exception:
+            dmarc_found = False
+
+        # Status Badges
+        spf_badge = '<span style="color: #3fb950; font-weight: bold;">✔ Valid</span>' if spf_found else '<span style="color: #f85149; font-weight: bold;">✖ Missing</span>'
+        dmarc_badge = '<span style="color: #3fb950; font-weight: bold;">✔ Configured</span>' if dmarc_found else '<span style="color: #f85149; font-weight: bold;">✖ Missing</span>'
+        mx_badge = '<span style="color: #3fb950; font-weight: bold;">✔ Detected</span>' if mx_found else '<span style="color: #f85149; font-weight: bold;">✖ No MX Records</span>'
+        
+        score_color = "#3fb950" if score >= 80 else ("#d29922" if score >= 50 else "#f85149")
+
         results_html = f'''
         <div style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 25px; margin-top: 30px;">
             <div style="text-align: center; margin-bottom: 25px;">
                 <h2 style="color: #f0f6fc; margin-bottom: 5px;">Health Score for <span style="color: #2f81f7;">{domain_input}</span></h2>
-                <div style="font-size: 3rem; font-weight: bold; color: #3fb950; margin: 10px 0;">{score} / 100</div>
-                <p style="color: #8b949e;">Good Deliverability Health - Minor Optimization Recommended</p>
+                <div style="font-size: 3.5rem; font-weight: bold; color: {score_color}; margin: 10px 0;">{score} / 100</div>
+                <p style="color: #8b949e;">Live DNS Audit Results</p>
             </div>
             
             <div style="display: grid; gap: 15px;">
                 <div style="background: #0d1117; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                     <span>🛡️ <strong>SPF Record Status</strong></span>
-                    <span style="color: #3fb950; font-weight: bold;">✔ Valid</span>
+                    {spf_badge}
                 </div>
                 <div style="background: #0d1117; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                     <span>🔒 <strong>DMARC Alignment</strong></span>
-                    <span style="color: #3fb950; font-weight: bold;">✔ Configured</span>
+                    {dmarc_badge}
                 </div>
                 <div style="background: #0d1117; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                    <span>📮 <strong>MX Provider Records</strong></span>
-                    <span style="color: #3fb950; font-weight: bold;">✔ Detected</span>
-                </div>
-                <div style="background: #0d1117; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                    <span>🚫 <strong>IP Blacklist Check</strong></span>
-                    <span style="color: #3fb950; font-weight: bold;">0 Detection(s)</span>
+                    <span>📮 <strong>MX Mail Server Records</strong></span>
+                    {mx_badge}
                 </div>
             </div>
         </div>
@@ -337,8 +377,8 @@ async def email_health_score_page(domain: str = ""):
     </div>
     <div class="container">
         <h1 style="color: #f0f6fc; text-align: center;">📊 Instant Email Health Score</h1>
-        <p style="text-align: center; color: #8b949e;">Test your domain's SPF, DMARC, MX setup, and blacklist reputation in one click.</p>
-        
+        <p style="text-align: center; color: #8b949e;">Test your domain's SPF, DMARC, and MX setup in real-time.</p>
+
         <form method="get" action="/email-health-score" class="search-box">
             <input type="text" name="domain" placeholder="example.com" value="{domain_input}" required />
             <button type="submit">Run Audit</button>
@@ -349,7 +389,6 @@ async def email_health_score_page(domain: str = ""):
 </body>
 </html>'''
     return HTMLResponse(content=html)
-
 # ==========================================
 # 5. FAQ Page
 # ==========================================
