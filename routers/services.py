@@ -460,3 +460,133 @@ async def faq_page():
 </body>
 </html>'''
     return HTMLResponse(content=html)
+
+# ==========================================
+# 6. Developer API Documentation (SaaS-Ready)
+# ==========================================
+@router.get("/api-docs", response_class=HTMLResponse)
+async def api_documentation():
+    head = build_head_tags(
+        title="Developer API Documentation | BlacklistMail API",
+        description="Integrate BlacklistMail real-time DNSBL, DMARC, and SPF domain reputation APIs into your applications.",
+        canonical_url="https://blacklistmail.com/api-docs"
+    )
+    
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+{head}
+<style>
+    body {{ font-family: system-ui, -apple-system, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 0; line-height: 1.6; }}
+    .navbar {{ background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
+    .navbar a {{ color: #2f81f7; text-decoration: none; font-weight: 600; }}
+    .container {{ max-width: 900px; margin: 40px auto; padding: 0 20px; }}
+    .endpoint-card {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 25px; }}
+    .badge-get {{ background: #238636; color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; }}
+    pre {{ background: #0d1117; border: 1px solid #30363d; padding: 15px; border-radius: 6px; overflow-x: auto; color: #79c0ff; font-family: monospace; font-size: 0.9rem; }}
+    code {{ color: #79c0ff; }}
+</style>
+<body>
+    <div class="navbar">
+        <strong style="color:#f0f6fc;">BlacklistMail API Docs</strong>
+        <a href="/">&larr; Back to Home</a>
+    </div>
+    <div class="container">
+        <h1 style="color: #f0f6fc; margin-bottom: 10px;">⚡ BlacklistMail Developer API</h1>
+        <p style="color: #8b949e; font-size: 1.1rem; margin-bottom: 30px;">
+            Integrate domain deliverability audits and DNS lookup capabilities directly into your SaaS or internal infrastructure.
+        </p>
+
+        <div class="endpoint-card">
+            <h3 style="color:#f0f6fc; margin-top:0;"><span class="badge-get">GET</span> /api/v1/health-score</h3>
+            <p style="color:#8b949e;">Audit a domain's SPF, DMARC, and MX setup programmatically.</p>
+            
+            <h4 style="color:#c9d1d9; margin-bottom:5px;">Request Example:</h4>
+            <pre>curl -X GET "https://blacklistmail.com/api/v1/health-score?domain=example.com"</pre>
+
+            <h4 style="color:#c9d1d9; margin-bottom:5px;">JSON Response:</h4>
+            <pre>{{
+  "domain": "example.com",
+  "score": 100,
+  "checks": {{
+    "spf": true,
+    "dmarc": true,
+    "mx": true
+  }},
+  "timestamp": "2026-08-22T14:40:00Z"
+}}</pre>
+        </div>
+
+        <div class="endpoint-card">
+            <h3 style="color:#f0f6fc; margin-top:0;"><span class="badge-get">GET</span> /api/v1/blacklist-check</h3>
+            <p style="color:#8b949e;">Check an IP address or domain against 50+ major real-time DNSBL databases.</p>
+
+            <h4 style="color:#c9d1d9; margin-bottom:5px;">Request Example:</h4>
+            <pre>curl -X GET "https://blacklistmail.com/api/v1/blacklist-check?target=1.1.1.1"</pre>
+        </div>
+
+        <div style="background: #161b22; border: 1px dashed #2f81f7; border-radius: 8px; padding: 20px; text-align: center;">
+            <h3 style="color: #f0f6fc; margin: 0 0 10px 0;">🔑 Need Enterprise API Keys?</h3>
+            <p style="color: #8b949e; margin-bottom: 15px;">Automated high-rate-limit API access is currently available for beta integration partners.</p>
+            <a href="mailto:support@blacklistmail.com" style="background: #2f81f7; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Request API Access</a>
+        </div>
+    </div>
+</body>
+</html>'''
+    return HTMLResponse(content=html)
+
+
+# ==========================================
+# 7. Glossary / Email Security Dictionary
+# ==========================================
+@router.get("/glossary", response_class=HTMLResponse)
+async def glossary_page():
+    head = build_head_tags(
+        title="Email Security Glossary & Terms Dictionary | BlacklistMail",
+        description="Comprehensive dictionary of email deliverability terms including DNSBL, RBL, SPF, DMARC, DKIM, and PTR.",
+        canonical_url="https://blacklistmail.com/glossary"
+    )
+
+    terms = [
+        {"term": "DNSBL (DNS Blacklist)", "def": "A real-time database used by mail servers to query whether an IP address or domain is associated with spam propagation or malicious behavior."},
+        {"term": "SPF (Sender Policy Framework)", "def": "A DNS authentication protocol that specifies which IP addresses or mail servers are authorized to send email on behalf of a given domain."},
+        {"term": "DMARC", "def": "Domain-based Message Authentication, Reporting, and Conformance. A policy protocol designed to give domain owners the ability to protect their domain from unauthorized use (phishing/spoofing)."},
+        {"term": "DKIM (DomainKeys Identified Mail)", "def": "An email authentication method that uses cryptographic signatures to verify that an email message was sent by the domain owner and wasn't altered in transit."},
+        {"term": "RBL (Real-time Blackhole List)", "def": "Another term for a DNSBL. It dynamically tracks IP addresses sending unsolicited bulk messages."},
+        {"term": "PTR Record (Reverse DNS)", "def": "A DNS record that maps an IP address back to its domain name. Essential for establishing mail server authenticity."},
+        {"term": "SoftFail (~all)", "def": "An SPF mechanism qualifier indicating that an unauthorized server sending on behalf of the domain should be flagged as suspicious but not rejected outright."},
+        {"term": "HardFail (-all)", "def": "An SPF qualifier instructing receiving mail servers to explicitly reject any messages originating from unauthorized IPs."},
+        {"term": "BIMI", "def": "Brand Indicators for Message Identification. A standard allowing compliant senders to display official brand logos directly in recipient inboxes."}
+    ]
+
+    terms_html = ""
+    for t in terms:
+        terms_html += f'''
+        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+            <h3 style="color: #2f81f7; margin-top: 0; font-size: 1.2rem;">{t['term']}</h3>
+            <p style="color: #c9d1d9; margin-bottom: 0; font-size: 0.95rem;">{t['def']}</p>
+        </div>
+        '''
+
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+{head}
+<style>
+    body {{ font-family: system-ui, -apple-system, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 0; line-height: 1.6; }}
+    .navbar {{ background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
+    .navbar a {{ color: #2f81f7; text-decoration: none; font-weight: 600; }}
+    .container {{ max-width: 800px; margin: 40px auto; padding: 0 20px; }}
+</style>
+<body>
+    <div class="navbar">
+        <strong style="color:#f0f6fc;">BlacklistMail Glossary</strong>
+        <a href="/">&larr; Back to Home</a>
+    </div>
+    <div class="container">
+        <h1 style="color: #f0f6fc; text-align: center;">📖 Email Security Glossary</h1>
+        <p style="text-align: center; color: #8b949e; margin-bottom: 30px;">Key technical terms and definitions explaining deliverability and DNS protocol security.</p>
+        
+        {terms_html}
+    </div>
+</body>
+</html>'''
+    return HTMLResponse(content=html)

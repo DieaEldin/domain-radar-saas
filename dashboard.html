@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- 1. Dynamic Title (Fixed for SEO) -->
-    <title>BlacklistMail Radar — Enterprise Domain & Email Intelligence
-    </title>
+    <title>BlacklistMail Radar — Enterprise Domain & Email Intelligence</title>
 
-    <!-- 2. Dynamic Meta Description (Fixed for Ahrefs SEO) -->
+    <!-- 2. Dynamic Meta Description -->
     <meta name="description"
         content="{{ page_description if page_description else 'Real-time domain blacklist detection, IP reputation checks, and automated MX/SPF security intelligence reports for enterprise email deliverability.' }}">
 
@@ -38,18 +37,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Custom CSS Styling -->
+    <!-- Custom CSS Styling & Theme Toggle -->
     <style>
         body {
             background-color: #0b0f19;
             color: #f8fafc;
             font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .glass-card {
             background: rgba(17, 24, 39, 0.7);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .gradient-text {
@@ -65,6 +66,65 @@
         /* Dropdown Navigation Menu Hover */
         .dropdown:hover .dropdown-menu {
             display: block !important;
+        }
+
+        /* LIGHT MODE OVERRIDES */
+        body.light-mode {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode nav {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body.light-mode nav a,
+        body.light-mode nav button {
+            color: #334155 !important;
+        }
+
+        body.light-mode nav a:hover {
+            color: #0284c7 !important;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3 {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .dropdown-menu {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body.light-mode .dropdown-menu a {
+            color: #334155 !important;
+        }
+
+        body.light-mode .dropdown-menu a:hover {
+            background-color: #f1f5f9 !important;
+            color: #0284c7 !important;
+        }
+
+        body.light-mode footer {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        body.light-mode footer a {
+            color: #475569 !important;
+        }
+
+        body.light-mode input#domainInput {
+            color: #0f172a !important;
         }
     </style>
 
@@ -91,7 +151,7 @@
 <body>
     <div class="min-h-screen pb-12">
 
-        <!-- Enterprise Navigation Header -->
+        <!-- Enterprise Navigation Header (Sticky Header) -->
         <nav
             class="border-b border-gray-800 bg-gray-900/60 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -107,7 +167,7 @@
             </div>
 
             <!-- Navigation Links -->
-            <div class="flex items-center space-x-6 text-sm font-medium">
+            <div class="flex items-center space-x-5 text-sm font-medium">
                 <!-- Dropdown Tools -->
                 <div class="relative dropdown py-2">
                     <button
@@ -116,7 +176,11 @@
                         <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
                     </button>
                     <div
-                        class="dropdown-menu hidden absolute left-0 mt-1 w-52 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-2 z-50">
+                        class="dropdown-menu hidden absolute left-0 mt-1 w-56 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-2 z-50">
+                        <a href="/email-health-score"
+                            class="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-emerald-400 hover:bg-gray-800 rounded-lg transition-colors">
+                            <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i> Email Health Score
+                        </a>
                         <a href="/spf-checker"
                             class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
                             <i data-lucide="shield-check" class="w-4 h-4 text-sky-400"></i> SPF Checker
@@ -126,7 +190,7 @@
                             <i data-lucide="lock" class="w-4 h-4 text-sky-400"></i> DMARC Checker
                         </a>
                         <a href="/dkim-checker"
-                            class="flex items-center gap-2 px-3 py-2 text-xs text-sky-400 font-semibold hover:bg-gray-800 rounded-lg transition-colors">
+                            class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
                             <i data-lucide="key" class="w-4 h-4 text-sky-400"></i> DKIM Checker
                         </a>
                         <a href="/spam-analyzer"
@@ -137,7 +201,6 @@
                             class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
                             <i data-lucide="shield-alert" class="w-4 h-4 text-sky-400"></i> SSL Checker
                         </a>
-                        <!-- أضف السطر التالي داخل قائمة الأدوات -->
                         <a href="/txt-lookup"
                             class="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 hover:bg-gray-800 hover:text-sky-400 rounded-lg transition-colors">
                             <i data-lucide="file-text" class="w-4 h-4 text-sky-400"></i> DNS TXT Lookup
@@ -145,15 +208,25 @@
                     </div>
                 </div>
 
+                <a href="/glossary"
+                    class="text-gray-300 hover:text-sky-400 transition-colors hidden sm:inline-block">Glossary</a>
+                <a href="/api-docs"
+                    class="text-gray-300 hover:text-sky-400 transition-colors hidden sm:inline-block">API Docs</a>
                 <a href="/news"
-                    class="text-gray-300 hover:text-sky-400 transition-colors hidden sm:inline-block">Security News</a>
-                <a href="/uptime-monitor"
-                    class="text-gray-300 hover:text-sky-400 transition-colors hidden md:inline-block">Uptime Monitor</a>
-                <a href="/pricing" class="text-sky-400 hover:text-sky-300 font-semibold hidden md:inline-block">API &
-                    Pricing</a>
+                    class="text-gray-300 hover:text-sky-400 transition-colors hidden md:inline-block">News</a>
+                <a href="/pricing"
+                    class="text-sky-400 hover:text-sky-300 font-semibold hidden lg:inline-block">Pricing</a>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()"
+                    class="p-2 rounded-xl border border-gray-700 hover:bg-gray-800 text-gray-300 transition-all focus:outline-none"
+                    title="Toggle Light/Dark Theme">
+                    <i data-lucide="sun" id="themeIconSun" class="w-4 h-4 hidden"></i>
+                    <i data-lucide="moon" id="themeIconMoon" class="w-4 h-4"></i>
+                </button>
 
                 <span
-                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hidden sm:inline-flex">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-ping"></span> Live Engine v3.0
                 </span>
             </div>
@@ -177,14 +250,14 @@
                 </h1>
 
                 <!-- Sub Heading -->
-                <p class="text-gray-400 text-base md:text-lg mb-9 max-w-2xl mx-auto leading-relaxed">
+                <p class="text-gray-400 text-base md:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
                     Check blacklist status, financial valuation, active ecosystems, and email deliverability — <span
                         class="text-gray-200 font-medium">all in one report.</span>
                 </p>
 
                 <!-- Search Box -->
                 <form onsubmit="event.preventDefault(); runAudit();"
-                    class="glass-card p-2 rounded-2xl radar-glow flex items-center gap-2 max-w-2xl mx-auto">
+                    class="glass-card p-2 rounded-2xl radar-glow flex items-center gap-2 max-w-2xl mx-auto mb-6">
                     <div class="pl-4 text-gray-400">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </div>
@@ -197,6 +270,18 @@
                         <i id="btnIcon" data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </form>
+
+                <!-- Quick Hero CTAs -->
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <a href="/email-health-score"
+                        class="text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5">
+                        <i data-lucide="activity" class="w-3.5 h-3.5"></i> Try Free Email Health Check
+                    </a>
+                    <a href="/api-docs"
+                        class="text-xs font-semibold px-4 py-2 rounded-xl bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700 transition-all flex items-center gap-1.5">
+                        <i data-lucide="code" class="w-3.5 h-3.5"></i> Integrate Developer API
+                    </a>
+                </div>
             </div>
 
             <!-- Loading Indicator (Hidden by default) -->
@@ -318,6 +403,35 @@
         <script>
             lucide.createIcons();
 
+            // Theme Toggle Functionality
+            function toggleTheme() {
+                document.body.classList.toggle('light-mode');
+                const isLight = document.body.classList.contains('light-mode');
+                localStorage.setItem('theme_preference', isLight ? 'light' : 'dark');
+                updateThemeIcons(isLight);
+            }
+
+            function updateThemeIcons(isLight) {
+                const sun = document.getElementById('themeIconSun');
+                const moon = document.getElementById('themeIconMoon');
+                if (isLight) {
+                    sun.classList.remove('hidden');
+                    moon.classList.add('hidden');
+                } else {
+                    sun.classList.add('hidden');
+                    moon.classList.remove('hidden');
+                }
+            }
+
+            // Load saved theme on initial load
+            document.addEventListener("DOMContentLoaded", () => {
+                const savedTheme = localStorage.getItem('theme_preference');
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    updateThemeIcons(true);
+                }
+            });
+
             function runAudit() {
                 const domainInput = document.getElementById('domainInput').value.trim();
                 if (!domainInput) return;
@@ -380,63 +494,72 @@
         </script>
 
         <!-- Footer Links for SEO & Ahrefs Audit -->
-<!-- Footer Links for SEO & Ahrefs Audit -->
-<footer style="background: #0f172a; border-top: 1px solid #334155; padding: 40px 20px; margin-top: 50px;">
-    <div
-        style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; text-align: left;">
+        <footer style="background: #0f172a; border-top: 1px solid #334155; padding: 40px 20px; margin-top: 50px;">
+            <div
+                style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; text-align: left;">
 
-        <!-- Column 1: Verification Tools -->
-        <div>
-            <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 15px;">Email Verification & Audit</h4>
-            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
-                <li><a href="/email-health-score" style="color: #38bdf8; text-decoration: none; font-weight: bold;">📊
-                        Email Health Score</a></li>
-                <li><a href="/spf-checker" style="color: #94a3b8; text-decoration: none;">SPF Checker</a></li>
-                <li><a href="/dmarc-checker" style="color: #94a3b8; text-decoration: none;">DMARC Checker</a></li>
-                <li><a href="/dkim-checker" style="color: #94a3b8; text-decoration: none;">DKIM Checker</a></li>
-                <li><a href="/mx-lookup" style="color: #94a3b8; text-decoration: none;">MX Lookup</a></li>
-                <li><a href="/ptr-lookup" style="color: #94a3b8; text-decoration: none;">PTR Lookup</a></li>
-                <li><a href="/bimi-inspector" style="color: #94a3b8; text-decoration: none;">BIMI Inspector</a></li>
-            </ul>
-        </div>
+                <!-- Column 1: Verification Tools -->
+                <div>
+                    <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 15px;">Email Verification & Audit</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                        <li><a href="/email-health-score"
+                                style="color: #38bdf8; text-decoration: none; font-weight: bold;">📊 Email Health
+                                Score</a></li>
+                        <li><a href="/spf-checker" style="color: #94a3b8; text-decoration: none;">SPF Checker</a></li>
+                        <li><a href="/dmarc-checker" style="color: #94a3b8; text-decoration: none;">DMARC Checker</a>
+                        </li>
+                        <li><a href="/dkim-checker" style="color: #94a3b8; text-decoration: none;">DKIM Checker</a></li>
+                        <li><a href="/mx-lookup" style="color: #94a3b8; text-decoration: none;">MX Lookup</a></li>
+                        <li><a href="/ptr-lookup" style="color: #94a3b8; text-decoration: none;">PTR Lookup</a></li>
+                        <li><a href="/bimi-inspector" style="color: #94a3b8; text-decoration: none;">BIMI Inspector</a>
+                        </li>
+                    </ul>
+                </div>
 
-        <!-- Column 2: Generators & Utilities -->
-        <div>
-            <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 15px;">Generators & Tools</h4>
-            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
-                <li><a href="/spf-generator" style="color: #94a3b8; text-decoration: none;">SPF Generator</a></li>
-                <li><a href="/dmarc-generator" style="color: #94a3b8; text-decoration: none;">DMARC Generator</a></li>
-                <li><a href="/bimi-generator" style="color: #94a3b8; text-decoration: none;">BIMI Generator</a></li>
-                <li><a href="/spam-analyzer" style="color: #94a3b8; text-decoration: none;">Spam Analyzer</a></li>
-                <li><a href="/ssl-checker" style="color: #94a3b8; text-decoration: none;">SSL Checker</a></li>
-                <li><a href="/txt-lookup" style="color: #94a3b8; text-decoration: none;">TXT Record Lookup</a></li>
-            </ul>
-        </div>
+                <!-- Column 2: Generators & Utilities -->
+                <div>
+                    <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 15px;">Generators & Tools</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                        <li><a href="/spf-generator" style="color: #94a3b8; text-decoration: none;">SPF Generator</a>
+                        </li>
+                        <li><a href="/dmarc-generator" style="color: #94a3b8; text-decoration: none;">DMARC
+                                Generator</a></li>
+                        <li><a href="/bimi-generator" style="color: #94a3b8; text-decoration: none;">BIMI Generator</a>
+                        </li>
+                        <li><a href="/spam-analyzer" style="color: #94a3b8; text-decoration: none;">Spam Analyzer</a>
+                        </li>
+                        <li><a href="/ssl-checker" style="color: #94a3b8; text-decoration: none;">SSL Checker</a></li>
+                        <li><a href="/txt-lookup" style="color: #94a3b8; text-decoration: none;">TXT Record Lookup</a>
+                        </li>
+                    </ul>
+                </div>
 
-        <!-- Column 3: Platform & Knowledge -->
-        <div>
-            <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 15px;">Platform & Resources</h4>
-            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
-                <li><a href="/faq" style="color: #4ade80; text-decoration: none; font-weight: bold;">❓ FAQ & Guides</a>
-                </li>
-                <li><a href="/delisting-directory" style="color: #94a3b8; text-decoration: none;">Delisting
-                        Directory</a></li>
-                <li><a href="/uptime-monitor" style="color: #94a3b8; text-decoration: none;">Uptime Monitor</a></li>
-                <li><a href="/pricing" style="color: #94a3b8; text-decoration: none;">API & Pricing</a></li>
-                <li><a href="/about" style="color: #94a3b8; text-decoration: none;">About Us</a></li>
-                <li><a href="/contact" style="color: #94a3b8; text-decoration: none;">Contact Support</a></li>
-                <li><a href="/status" style="color: #94a3b8; text-decoration: none;">System Status</a></li>
-                <li><a href="/news" style="color: #94a3b8; text-decoration: none;">Security News</a></li>
-                <li><a href="/sitemap.xml" style="color: #94a3b8; text-decoration: none;">Sitemap</a></li>
-            </ul>
-        </div>
+                <!-- Column 3: Platform & Knowledge -->
+                <div>
+                    <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 15px;">Platform & Resources</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                        <li><a href="/glossary" style="color: #38bdf8; text-decoration: none; font-weight: bold;">📖
+                                Email Glossary</a></li>
+                        <li><a href="/api-docs" style="color: #38bdf8; text-decoration: none; font-weight: bold;">⚡
+                                Developer API</a></li>
+                        <li><a href="/faq" style="color: #4ade80; text-decoration: none; font-weight: bold;">❓ FAQ &
+                                Guides</a></li>
+                        <li><a href="/delisting-directory" style="color: #94a3b8; text-decoration: none;">Delisting
+                                Directory</a></li>
+                        <li><a href="/uptime-monitor" style="color: #94a3b8; text-decoration: none;">Uptime Monitor</a>
+                        </li>
+                        <li><a href="/pricing" style="color: #94a3b8; text-decoration: none;">API & Pricing</a></li>
+                        <li><a href="/news" style="color: #94a3b8; text-decoration: none;">Security News</a></li>
+                        <li><a href="/sitemap.xml" style="color: #94a3b8; text-decoration: none;">Sitemap</a></li>
+                    </ul>
+                </div>
 
-    </div>
-    <div
-        style="text-align: center; color: #64748b; font-size: 13px; margin-top: 30px; border-top: 1px solid #1e293b; padding-top: 20px;">
-        © 2026 BlacklistMail Radar. All rights reserved.
-    </div>
-</footer>
+            </div>
+            <div
+                style="text-align: center; color: #64748b; font-size: 13px; margin-top: 30px; border-top: 1px solid #1e293b; padding-top: 20px;">
+                © 2026 BlacklistMail Radar. All rights reserved.
+            </div>
+        </footer>
     </div>
 </body>
 
