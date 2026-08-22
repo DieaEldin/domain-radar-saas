@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse
 from utils import build_head_tags, MONETIZATION_HTML
 import httpx
 
-
 router = APIRouter(tags=["Services"])
 
 # ==========================================
@@ -178,7 +177,6 @@ NEWS_DATA = {
     }
 }
 
-# 1. الصفحة الرئيسية للأخبار (/news)
 @router.get("/news", response_class=HTMLResponse)
 async def security_news(request: Request):
     articles_html = ""
@@ -223,7 +221,6 @@ async def security_news(request: Request):
     return HTMLResponse(content=html)
 
 
-# 2. صفحة الخبر المنفصل (/news/{slug})
 @router.get("/news/{slug}", response_class=HTMLResponse)
 async def news_detail(slug: str):
     if slug not in NEWS_DATA:
@@ -263,7 +260,6 @@ async def news_detail(slug: str):
             {article['content']}
         </div>
 
-        <!-- Internal Linking Box -->
         <div class="cta-box">
             <h4 style="margin: 0 0 10px 0; color: #fff; font-size: 16px;">🔍 Verify Your Domain Security Compliance</h4>
             <p style="margin: 0; font-size: 14px; color: #94a3b8; line-height: 1.6;">Ensure your email setup meets provider mandates. Perform a instant live audit using our <a href="/dmarc-checker">DMARC Inspector</a>, <a href="/txt-lookup">DNS TXT Lookup</a>, or <a href="/spf-checker">SPF Checker</a> tools.</p>
@@ -273,19 +269,10 @@ async def news_detail(slug: str):
 </html>'''
     return HTMLResponse(content=html)
 
-# ==========================================
-# 4. Email Health Score (Comprehensive Audit)
-# ==========================================
 
 # ==========================================
-# 4. Email Health Score (Dynamic Audit)
+# 4. Email Health Score (DoH API Audit - Fixed)
 # ==========================================
-
-
-# ==========================================
-# 4. Email Health Score (DoH API Audit)
-# ==========================================
-
 @router.get("/email-health-score", response_class=HTMLResponse)
 async def email_health_score_page(domain: str = ""):
     head = build_head_tags(
@@ -301,37 +288,45 @@ async def email_health_score_page(domain: str = ""):
         score = 0
         spf_found, dmarc_found, mx_found = False, False, False
         
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            # 1. Check MX Records via Google DoH
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            # 1. Check MX Records
             try:
                 res_mx = await client.get(f"https://dns.google/resolve?name={domain_input}&type=MX")
-                if res_mx.status_code == 200 and "Answer" in res_mx.json():
-                    mx_found = True
-                    score += 30
+                if res_mx.status_code == 200:
+                    data = res_mx.json()
+                    if data.get("Status") == 0 and "Answer" in data:
+                        mx_found = True
+                        score += 30
             except Exception:
                 pass
 
-            # 2. Check SPF Record via Google DoH
+            # 2. Check SPF Record
             try:
                 res_txt = await client.get(f"https://dns.google/resolve?name={domain_input}&type=TXT")
-                if res_txt.status_code == 200 and "Answer" in res_txt.json():
-                    for ans in res_txt.json()["Answer"]:
-                        if "v=spf1" in ans.get("data", ""):
-                            spf_found = True
-                            score += 35
-                            break
+                if res_txt.status_code == 200:
+                    data = res_txt.json()
+                    if data.get("Status") == 0 and "Answer" in data:
+                        for ans in data["Answer"]:
+                            txt_data = ans.get("data", "").lower()
+                            if "v=spf1" in txt_data:
+                                spf_found = True
+                                score += 35
+                                break
             except Exception:
                 pass
 
-            # 3. Check DMARC Record via Google DoH
+            # 3. Check DMARC Record
             try:
                 res_dmarc = await client.get(f"https://dns.google/resolve?name=_dmarc.{domain_input}&type=TXT")
-                if res_dmarc.status_code == 200 and "Answer" in res_dmarc.json():
-                    for ans in res_dmarc.json()["Answer"]:
-                        if "v=DMARC1" in ans.get("data", ""):
-                            dmarc_found = True
-                            score += 35
-                            break
+                if res_dmarc.status_code == 200:
+                    data = res_dmarc.json()
+                    if data.get("Status") == 0 and "Answer" in data:
+                        for ans in data["Answer"]:
+                            txt_data = ans.get("data", "").lower()
+                            if "v=dmarc1" in txt_data:
+                                dmarc_found = True
+                                score += 35
+                                break
             except Exception:
                 pass
 
@@ -398,14 +393,17 @@ async def email_health_score_page(domain: str = ""):
     </div>
 </body>
 </html>'''
-    return HTMLResponse(content=html)# ==========================================
-# 5. FAQ Page
+    return HTMLResponse(content=html)
+
+
+# ==========================================
+# 5. FAQ Page (SEO Enhanced)
 # ==========================================
 @router.get("/faq", response_class=HTMLResponse)
 async def faq_page():
     head = build_head_tags(
         title="Frequently Asked Questions | Email Security & Blacklists",
-        description="Learn about email deliverability, DNS security records, and how to request blacklist removal.",
+        description="Learn about email deliverability, DNS security records, BIMI requirements, and how to request blacklist removal.",
         canonical_url="https://blacklistmail.com/faq"
     )
     
@@ -414,7 +412,7 @@ async def faq_page():
 {head}
 <style>
     body {{ font-family: system-ui, -apple-system, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 0; line-height: 1.6; }}
-    .navbar {{ background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; }}
+    .navbar {{ background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
     .navbar a {{ color: #2f81f7; text-decoration: none; font-weight: 600; }}
     .container {{ max-width: 800px; margin: 40px auto; padding: 0 20px; }}
     .faq-item {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 15px; }}
@@ -423,7 +421,7 @@ async def faq_page():
 </style>
 <body>
     <div class="navbar">
-        <strong>BlacklistMail Knowledge Base</strong>
+        <strong style="color:#f0f6fc;">BlacklistMail Knowledge Base</strong>
         <a href="/">&larr; Back to Home</a>
     </div>
     <div class="container">
@@ -431,17 +429,32 @@ async def faq_page():
         
         <div class="faq-item">
             <h3>How do I remove my IP or domain from a blacklist?</h3>
-            <p>You can locate the official removal portal using our <a href="/delisting-directory" style="color:#2f81f7;">Delisting Directory</a> and submit a removal request once you've resolved the spam source.</p>
+            <p>You can locate the official removal portal using our <a href="/delisting-directory" style="color:#2f81f7;">Delisting Directory</a> and submit a removal request once you have resolved the underlying spam or security issue.</p>
         </div>
 
         <div class="faq-item">
             <h3>What is the difference between SPF and DMARC?</h3>
-            <p>SPF defines which servers are authorized to send email on behalf of your domain, while DMARC instructs receiving mail servers how to handle emails that fail SPF or DKIM checks.</p>
+            <p>SPF defines which IP addresses/servers are authorized to send email on behalf of your domain. DMARC instructs receiving servers how to handle messages that fail SPF or DKIM checks.</p>
         </div>
 
         <div class="faq-item">
             <h3>Why are my emails landing in the Spam folder?</h3>
-            <p>Common causes include missing DMARC enforcement, blacklisted sending IPs, high spam complaint rates, or DNS lookup syntax errors in your SPF record.</p>
+            <p>Common causes include missing DMARC enforcement policies, blacklisted sending IPs, high spam complaint rates, or syntax errors exceeding the 10 DNS lookup limit in SPF records.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What are the requirements to display a BIMI Brand Logo in inboxes?</h3>
+            <p>To implement BIMI, your domain must enforce a strict DMARC policy (<code>p=quarantine</code> or <code>p=reject</code>), host a valid SVG Tiny P/S logo, and optionally secure a VMC (Verified Mark Certificate).</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>How often are Blacklist Monitoring databases updated?</h3>
+            <p>Major DNSBLs (such as Spamhaus and Barracuda) update their databases in real-time. Our automated checks query live DNS zone files to give you real-time status updates.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Does a high Email Health Score guarantee 100% Inbox Placement?</h3>
+            <p>While a high Health Score ensures your DNS authentication (SPF, DKIM, DMARC) is flawless, deliverability also depends on domain reputation, email content quality, and recipient engagement rates.</p>
         </div>
     </div>
 </body>
