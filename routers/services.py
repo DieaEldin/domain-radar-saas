@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Form, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from utils import build_head_tags, MONETIZATION_HTML
 import httpx
@@ -271,7 +271,7 @@ async def news_detail(slug: str):
 
 
 # ==========================================
-# 4. Email Health Score (DoH API Audit - Fixed)
+# 4. Email Health Score (DoH API Audit)
 # ==========================================
 @router.get("/email-health-score", response_class=HTMLResponse)
 async def email_health_score_page(domain: str = ""):
