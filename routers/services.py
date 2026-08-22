@@ -150,6 +150,29 @@ NEWS_DATA = {
             <p style="margin-top:20px;">Deploying BIMI significantly increases email open rates while insulating your domain from phishing spoofs.</p>
         """,
         "image": "https://blacklistmail.com/static/news-bimi.jpg"
+    },
+    "common-spf-errors-deliverability-impact": {
+        "title": "Top 5 SPF Record Misconfigurations Ruining Email Deliverability",
+        "date": "2026-08-22",
+        "summary": "Discover the most critical SPF syntax errors, lookup limits, and alignment issues that push your emails into the spam folder.",
+        "content": """
+            <p>Sender Policy Framework (SPF) is a fundamental DNS authentication mechanism designed to prevent domain spoofing. However, a single syntax error or misconfiguration in your SPF record can severely damage your domain reputation and drop delivery rates.</p>
+
+            <h3 style="color:#fff; margin-top:20px;">1. Exceeding the 10 DNS Lookup Limit</h3>
+            <p>SPF evaluation mechanisms impose a strict limit of <strong>10 DNS lookups</strong>. Including multiple third-party services (e.g., Google Workspace, SendGrid, Mailchimp) can quickly exceed this limit, causing mail servers to return a <code>PermError</code> and bypass SPF validation entirely.</p>
+
+            <h3 style="color:#fff; margin-top:20px;">2. Multiple SPF Records on a Single Domain</h3>
+            <p>A domain must strictly contain <strong>only one SPF TXT record</strong>. Publishing multiple records causes receiving servers to reject all of them due to authentication ambiguity.</p>
+
+            <h3 style="color:#fff; margin-top:20px;">3. Using the Obsolete <code>ptr</code> Mechanism</h3>
+            <p>Using <code>ptr</code> mechanism in modern SPF records is strongly discouraged by RFC standards. It places unnecessary load on DNS resolvers and causes soft delivery failures.</p>
+
+            <h3 style="color:#fff; margin-top:20px;">4. Misconfigured All Mechanisms (<code>~all</code> vs <code>-all</code>)</h3>
+            <p>Failing to end your record with an explicit qualifier like <code>~all</code> (SoftFail) or <code>-all</code> (HardFail) leaves your domain vulnerable to impersonation and phishing attacks.</p>
+
+            <p style="margin-top:25px;">To prevent these silent delivery failures, validate your record layout before sending campaigns.</p>
+        """,
+        "image": "https://blacklistmail.com/static/news-spf.jpg"
     }
 }
 
