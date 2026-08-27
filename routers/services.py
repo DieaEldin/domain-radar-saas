@@ -564,8 +564,8 @@ terms = [
     {"term": "Warmup Period (Domain/IP Warming)", "def": "The strategic practice of gradually increasing the volume of outgoing emails sent from a new IP address or domain over several weeks to build a positive sender reputation with Internet Service Providers (ISPs)."}
 ]
 
-    terms_html = ""
-    for t in terms:
+terms_html = ""
+for t in terms:
         terms_html += f'''
         <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
             <h3 style="color: #2f81f7; margin-top: 0; font-size: 1.2rem;">{t['term']}</h3>
