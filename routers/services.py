@@ -174,7 +174,29 @@ NEWS_DATA = {
             <p style="margin-top:25px;">To prevent these silent delivery failures, validate your record layout before sending campaigns.</p>
         """,
         "image": "https://blacklistmail.com/static/news-spf.jpg"
-    }
+    },
+    "google-yahoo-2026-email-deliverability-requirements": {
+        "title": "Google & Yahoo Email Deliverability Requirements in 2026: Mandatory Enforcement Checklist",
+        "date": "August 2026",
+        "category": "Deliverability & Compliance",
+        "summary": "Inbox providers have officially tightened their strict policies regarding bulk email senders (sending 5,000+ messages daily). Failure to implement technical DNS authentication standards now results in immediate rejection codes (550 5.7.1).",
+        "content": """
+        <p>Inbox providers have officially tightened their strict policies regarding bulk email senders (sending 5,000+ messages daily). Failure to implement technical DNS authentication standards now results in immediate rejection codes (<code>550 5.7.1</code>).</p>
+        
+        <h3>Key Enforcement Rules:</h3>
+        <ul>
+            <li><strong>Strict Authentication Alignment:</strong> Domains must have both valid SPF and DKIM records properly aligned with the header From domain.</li>
+            <li><strong>Enforced DMARC Policy:</strong> Senders must publish a DMARC record with at least <code>p=none</code> (moving toward <code>p=quarantine</code> or <code>p=reject</code>).</li>
+            <li><strong>Spam Rate Threshold (&lt; 0.10%):</strong> Postmaster spam complaint rates must stay below 0.10%, and never cross the maximum 0.30% red threshold.</li>
+            <li><strong>One-Click Unsubscribe (RFC 8058):</strong> All promotional and marketing emails must include an operational List-Unsubscribe-Post header.</li>
+        </ul>
+        <p><em>Use BlacklistMail Radar tools today to test your domain against these enforcement rules before sending your next campaign.</em></p>
+        """,
+        "image": "https://blacklistmail.com/static/news-dmarc.jpg"
+    },
+        
+    
+    
 }
 
 @router.get("/news", response_class=HTMLResponse)
