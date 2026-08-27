@@ -546,21 +546,23 @@ async def glossary_page():
         canonical_url="https://blacklistmail.com/glossary"
     )
 
-    terms = [
-        {"term": "DNSBL (DNS Blacklist)", "def": "A real-time database used by mail servers to query whether an IP address or domain is associated with spam propagation or malicious behavior."},
-        {"term": "SPF (Sender Policy Framework)", "def": "A DNS authentication protocol that specifies which IP addresses or mail servers are authorized to send email on behalf of a given domain."},
-        {"term": "DMARC", "def": "Domain-based Message Authentication, Reporting, and Conformance. A policy protocol designed to give domain owners the ability to protect their domain from unauthorized use (phishing/spoofing)."},
-        {"term": "DKIM (DomainKeys Identified Mail)", "def": "An email authentication method that uses cryptographic signatures to verify that an email message was sent by the domain owner and wasn't altered in transit."},
-        {"term": "RBL (Real-time Blackhole List)", "def": "Another term for a DNSBL. It dynamically tracks IP addresses sending unsolicited bulk messages."},
-        {"term": "PTR Record (Reverse DNS)", "def": "A DNS record that maps an IP address back to its domain name. Essential for establishing mail server authenticity."},
-        {"term": "SoftFail (~all)", "def": "An SPF mechanism qualifier indicating that an unauthorized server sending on behalf of the domain should be flagged as suspicious but not rejected outright."},
-        {"term": "HardFail (-all)", "def": "An SPF qualifier instructing receiving mail servers to explicitly reject any messages originating from unauthorized IPs."},
-        {"term": "BIMI", "def": "Brand Indicators for Message Identification. A standard allowing compliant senders to display official brand logos directly in recipient inboxes."}
-        {"term": "ARC (Authenticated Received Chain)", "def": "An email authentication protocol that preserves authentication results (SPF, DKIM, DMARC) when a message is forwarded through intermediate mail servers or mailing lists, preventing legitimate forwarded emails from failing authentication checks."}
-        {"term": "VMC (Verified Mark Certificate)", "def": "A digital security certificate that validates domain ownership and proves that a company legally owns the trademarked logo displayed alongside BIMI-supported inbox interfaces (such as Apple Mail and Gmail)."}
-        {"term": "List-Unsubscribe Header", "def": "An essential email header element mandated by major inbox providers (Google & Yahoo) allowing recipients to easily unsubscribe from marketing or bulk emails with a single click, protecting senders from high spam complaint rates."}
-        {"term": "Warmup Period (Domain/IP Warming)", "def": "The strategic practice of gradually increasing the volume of outgoing emails sent from a new IP address or domain over several weeks to build a positive sender reputation with Internet Service Providers (ISPs)."}
-    ]
+terms = [
+    {"term": "DNSBL (DNS Blacklist)", "def": "A real-time database used by mail servers to query whether an IP address or domain is associated with spam propagation or malicious behavior."},
+    {"term": "SPF (Sender Policy Framework)", "def": "A DNS authentication protocol that specifies which IP addresses or mail servers are authorized to send email on behalf of a given domain."},
+    {"term": "DMARC", "def": "Domain-based Message Authentication, Reporting, and Conformance. A policy protocol designed to give domain owners the ability to protect their domain from unauthorized use (phishing/spoofing)."},
+    {"term": "DKIM (DomainKeys Identified Mail)", "def": "An email authentication method that uses cryptographic signatures to verify that an email message was sent by the domain owner and wasn't altered in transit."},
+    {"term": "RBL (Real-time Blackhole List)", "def": "Another term for a DNSBL. It dynamically tracks IP addresses sending unsolicited bulk messages."},
+    {"term": "MX Record (Mail Exchange)", "def": "A resource record in the Domain Name System (DNS) that specifies the mail server responsible for accepting email messages on behalf of a domain name."},
+    {"term": "PTR Record (Reverse DNS)", "def": "A DNS record that maps an IP address back to its domain name. Essential for establishing mail server authenticity."},
+    {"term": "DMARC Alignment", "def": "The requirement that the domain in the visible 'From' header must match or align with the domain authenticated by SPF and/or DKIM protocols for DMARC to pass."},
+    {"term": "SoftFail (~all)", "def": "An SPF mechanism qualifier indicating that an unauthorized server sending on behalf of the domain should be flagged as suspicious but not rejected outright."},
+    {"term": "HardFail (-all)", "def": "An SPF qualifier instructing receiving mail servers to explicitly reject any messages originating from unauthorized IPs."},
+    {"term": "BIMI", "def": "Brand Indicators for Message Identification. A standard allowing compliant senders to display official brand logos directly in recipient inboxes."},
+    {"term": "ARC (Authenticated Received Chain)", "def": "An email authentication protocol that preserves authentication results (SPF, DKIM, DMARC) when a message is forwarded through intermediate mail servers or mailing lists, preventing legitimate forwarded emails from failing authentication checks."},
+    {"term": "VMC (Verified Mark Certificate)", "def": "A digital security certificate that validates domain ownership and proves that a company legally owns the trademarked logo displayed alongside BIMI-supported inbox interfaces (such as Apple Mail and Gmail)."},
+    {"term": "List-Unsubscribe Header", "def": "An essential email header element mandated by major inbox providers (Google & Yahoo) allowing recipients to easily unsubscribe from marketing or bulk emails with a single click, protecting senders from high spam complaint rates."},
+    {"term": "Warmup Period (Domain/IP Warming)", "def": "The strategic practice of gradually increasing the volume of outgoing emails sent from a new IP address or domain over several weeks to build a positive sender reputation with Internet Service Providers (ISPs)."}
+]
 
     terms_html = ""
     for t in terms:
