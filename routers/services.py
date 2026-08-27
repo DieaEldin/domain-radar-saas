@@ -539,43 +539,41 @@ async def api_documentation():
 # 7. Glossary / Email Security Dictionary
 # ==========================================
 @router.get("/glossary", response_class=HTMLResponse)
-async def glossary_page():
-    head = build_head_tags(
-        title="Email Security Glossary & Terms Dictionary | BlacklistMail",
-        description="Comprehensive dictionary of email deliverability terms including DNSBL, RBL, SPF, DMARC, DKIM, and PTR.",
-        canonical_url="https://blacklistmail.com/glossary"
-    )
+async def get_glossary():
+    terms = [
+        {"term": "DNSBL (DNS Blacklist)", "def": "A real-time database used by mail servers to query whether an IP address or domain is associated with spam propagation or malicious behavior."},
+        {"term": "SPF (Sender Policy Framework)", "def": "A DNS authentication protocol that specifies which IP addresses or mail servers are authorized to send email on behalf of a given domain."},
+        {"term": "DMARC", "def": "Domain-based Message Authentication, Reporting, and Conformance. A policy protocol designed to give domain owners the ability to protect their domain from unauthorized use (phishing/spoofing)."},
+        {"term": "DKIM (DomainKeys Identified Mail)", "def": "An email authentication method that uses cryptographic signatures to verify that an email message was sent by the domain owner and wasn't altered in transit."},
+        {"term": "RBL (Real-time Blackhole List)", "def": "Another term for a DNSBL. It dynamically tracks IP addresses sending unsolicited bulk messages."},
+        {"term": "MX Record (Mail Exchange)", "def": "A resource record in the Domain Name System (DNS) that specifies the mail server responsible for accepting email messages on behalf of a domain name."},
+        {"term": "PTR Record (Reverse DNS)", "def": "A DNS record that maps an IP address back to its domain name. Essential for establishing mail server authenticity."},
+        {"term": "DMARC Alignment", "def": "The requirement that the domain in the visible 'From' header must match or align with the domain authenticated by SPF and/or DKIM protocols for DMARC to pass."},
+        {"term": "SoftFail (~all)", "def": "An SPF mechanism qualifier indicating that an unauthorized server sending on behalf of the domain should be flagged as suspicious but not rejected outright."},
+        {"term": "HardFail (-all)", "def": "An SPF qualifier instructing receiving mail servers to explicitly reject any messages originating from unauthorized IPs."},
+        {"term": "BIMI", "def": "Brand Indicators for Message Identification. A standard allowing compliant senders to display official brand logos directly in recipient inboxes."},
+        {"term": "ARC (Authenticated Received Chain)", "def": "An email authentication protocol that preserves authentication results (SPF, DKIM, DMARC) when a message is forwarded through intermediate mail servers or mailing lists, preventing legitimate forwarded emails from failing authentication checks."},
+        {"term": "VMC (Verified Mark Certificate)", "def": "A digital security certificate that validates domain ownership and proves that a company legally owns the trademarked logo displayed alongside BIMI-supported inbox interfaces (such as Apple Mail and Gmail)."},
+        {"term": "List-Unsubscribe Header", "def": "An essential email header element mandated by major inbox providers (Google & Yahoo) allowing recipients to easily unsubscribe from marketing or bulk emails with a single click, protecting senders from high spam complaint rates."},
+        {"term": "Warmup Period (Domain/IP Warming)", "def": "The strategic practice of gradually increasing the volume of outgoing emails sent from a new IP address or domain over several weeks to build a positive sender reputation with Internet Service Providers (ISPs)."}
+    ]
 
-terms = [
-    {"term": "DNSBL (DNS Blacklist)", "def": "A real-time database used by mail servers to query whether an IP address or domain is associated with spam propagation or malicious behavior."},
-    {"term": "SPF (Sender Policy Framework)", "def": "A DNS authentication protocol that specifies which IP addresses or mail servers are authorized to send email on behalf of a given domain."},
-    {"term": "DMARC", "def": "Domain-based Message Authentication, Reporting, and Conformance. A policy protocol designed to give domain owners the ability to protect their domain from unauthorized use (phishing/spoofing)."},
-    {"term": "DKIM (DomainKeys Identified Mail)", "def": "An email authentication method that uses cryptographic signatures to verify that an email message was sent by the domain owner and wasn't altered in transit."},
-    {"term": "RBL (Real-time Blackhole List)", "def": "Another term for a DNSBL. It dynamically tracks IP addresses sending unsolicited bulk messages."},
-    {"term": "MX Record (Mail Exchange)", "def": "A resource record in the Domain Name System (DNS) that specifies the mail server responsible for accepting email messages on behalf of a domain name."},
-    {"term": "PTR Record (Reverse DNS)", "def": "A DNS record that maps an IP address back to its domain name. Essential for establishing mail server authenticity."},
-    {"term": "DMARC Alignment", "def": "The requirement that the domain in the visible 'From' header must match or align with the domain authenticated by SPF and/or DKIM protocols for DMARC to pass."},
-    {"term": "SoftFail (~all)", "def": "An SPF mechanism qualifier indicating that an unauthorized server sending on behalf of the domain should be flagged as suspicious but not rejected outright."},
-    {"term": "HardFail (-all)", "def": "An SPF qualifier instructing receiving mail servers to explicitly reject any messages originating from unauthorized IPs."},
-    {"term": "BIMI", "def": "Brand Indicators for Message Identification. A standard allowing compliant senders to display official brand logos directly in recipient inboxes."},
-    {"term": "ARC (Authenticated Received Chain)", "def": "An email authentication protocol that preserves authentication results (SPF, DKIM, DMARC) when a message is forwarded through intermediate mail servers or mailing lists, preventing legitimate forwarded emails from failing authentication checks."},
-    {"term": "VMC (Verified Mark Certificate)", "def": "A digital security certificate that validates domain ownership and proves that a company legally owns the trademarked logo displayed alongside BIMI-supported inbox interfaces (such as Apple Mail and Gmail)."},
-    {"term": "List-Unsubscribe Header", "def": "An essential email header element mandated by major inbox providers (Google & Yahoo) allowing recipients to easily unsubscribe from marketing or bulk emails with a single click, protecting senders from high spam complaint rates."},
-    {"term": "Warmup Period (Domain/IP Warming)", "def": "The strategic practice of gradually increasing the volume of outgoing emails sent from a new IP address or domain over several weeks to build a positive sender reputation with Internet Service Providers (ISPs)."}
-]
-
-terms_html = ""
-for t in terms:
+    terms_html = ""
+    for t in terms:
         terms_html += f'''
-        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
-            <h3 style="color: #2f81f7; margin-top: 0; font-size: 1.2rem;">{t['term']}</h3>
-            <p style="color: #c9d1d9; margin-bottom: 0; font-size: 0.95rem;">{t['def']}</p>
+        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px;">
+            <h3 style="color: #58a6ff; margin-top: 0; margin-bottom: 8px;">{t["term"]}</h3>
+            <p style="color: #c9d1d9; margin: 0; line-height: 1.5;">{t["def"]}</p>
         </div>
         '''
 
     html = f'''<!DOCTYPE html>
 <html lang="en">
-{head}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Security Glossary | BlacklistMail</title>
+</head>
 <style>
     body {{ font-family: system-ui, -apple-system, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 0; line-height: 1.6; }}
     .navbar {{ background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }}
