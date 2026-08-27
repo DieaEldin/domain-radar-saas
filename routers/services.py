@@ -456,6 +456,23 @@ async def faq_page():
             <h3>Does a high Email Health Score guarantee 100% Inbox Placement?</h3>
             <p>While a high Health Score ensures your DNS authentication (SPF, DKIM, DMARC) is flawless, deliverability also depends on domain reputation, email content quality, and recipient engagement rates.</p>
         </div>
+        
+        <div class="faq-item">
+            <h3>What is the mandatory SPF 10 DNS Lookup Limit and how do I fix it?</h3>
+            <p>The official SPF specification (RFC 7208) limits the maximum number of DNS lookups required to evaluate a record to 10. If your domain exceeds this limit, receiving servers will return an SPF PermError, failing authentication. You can fix this by removing unused include: mechanisms or using an SPF flattening technique.</p>
+        </div>
+        
+        <div class="faq-item">
+            <h3>Why is my email failing DMARC even though SPF and DKIM pass?</h3>
+            <p>This happens due to an Alignment Failure. For DMARC to pass, the domain in the visible "From" header must strictly or relaxed match the domain authenticated by SPF (Return-Path) or DKIM (d= tag). If the domains do not match, DMARC will fail despite valid signatures.</p>
+        </div>
+        
+        <div class="faq-item">
+            <h3How does BlacklistMail Radar check for IP and Domain blacklists in real-time?</h3>
+            <p>Our platform executes live, high-speed DNS queries against over 100+ trusted DNSBL (DNS Blacklist) and RBL databases. It queries the target IP or domain zone directly to provide immediate status feedback without caching stale results.</p>
+        </div>
+        
+        
     </div>
 </body>
 </html>'''
