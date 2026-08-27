@@ -177,7 +177,7 @@ NEWS_DATA = {
     },
     "google-yahoo-2026-email-deliverability-requirements": {
         "title": "Google & Yahoo Email Deliverability Requirements in 2026: Mandatory Enforcement Checklist",
-        "date": "August 2026",
+        "date": "2026-08-27",
         "category": "Deliverability & Compliance",
         "summary": "Inbox providers have officially tightened their strict policies regarding bulk email senders (sending 5,000+ messages daily). Failure to implement technical DNS authentication standards now results in immediate rejection codes (550 5.7.1).",
         "content": """
