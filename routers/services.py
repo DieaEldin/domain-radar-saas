@@ -468,7 +468,7 @@ async def faq_page():
         </div>
         
         <div class="faq-item">
-            <h3How does BlacklistMail Radar check for IP and Domain blacklists in real-time?</h3>
+            <h3>How does BlacklistMail Radar check for IP and Domain blacklists in real-time?</h3>
             <p>Our platform executes live, high-speed DNS queries against over 100+ trusted DNSBL (DNS Blacklist) and RBL databases. It queries the target IP or domain zone directly to provide immediate status feedback without caching stale results.</p>
         </div>
         
