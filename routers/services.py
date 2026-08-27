@@ -556,6 +556,10 @@ async def glossary_page():
         {"term": "SoftFail (~all)", "def": "An SPF mechanism qualifier indicating that an unauthorized server sending on behalf of the domain should be flagged as suspicious but not rejected outright."},
         {"term": "HardFail (-all)", "def": "An SPF qualifier instructing receiving mail servers to explicitly reject any messages originating from unauthorized IPs."},
         {"term": "BIMI", "def": "Brand Indicators for Message Identification. A standard allowing compliant senders to display official brand logos directly in recipient inboxes."}
+        {"term": "ARC (Authenticated Received Chain)", "def": "An email authentication protocol that preserves authentication results (SPF, DKIM, DMARC) when a message is forwarded through intermediate mail servers or mailing lists, preventing legitimate forwarded emails from failing authentication checks."}
+        {"term": "VMC (Verified Mark Certificate)", "def": "A digital security certificate that validates domain ownership and proves that a company legally owns the trademarked logo displayed alongside BIMI-supported inbox interfaces (such as Apple Mail and Gmail)."}
+        {"term": "List-Unsubscribe Header", "def": "An essential email header element mandated by major inbox providers (Google & Yahoo) allowing recipients to easily unsubscribe from marketing or bulk emails with a single click, protecting senders from high spam complaint rates."}
+        {"term": "Warmup Period (Domain/IP Warming)", "def": "The strategic practice of gradually increasing the volume of outgoing emails sent from a new IP address or domain over several weeks to build a positive sender reputation with Internet Service Providers (ISPs)."}
     ]
 
     terms_html = ""
